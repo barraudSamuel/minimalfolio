@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* Register your custom font family and tell the browser where to find it. */
+@font-face {
+    font-family: 'Robit';
+    src: url('/fonts/Robit-Dark.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}

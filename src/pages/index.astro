@@ -1,11 +1,79 @@
 ---
 import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import "../styles/global.css";
+import me from '../assets/me.jpg';
+import twitter from '../assets/twitter.webp';
+import youtube from '../assets/youtube.webp';
+import github from '../assets/github.webp';
+import ccup from '../assets/ccup.webp';
+import upcomingGames from '../assets/upcoming-games.webp';
+import scanTranslator from '../assets/scan-translator.webp';
+import lavot from '../assets/lavot.webp';
+import { Image } from 'astro:assets';
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
-
 <Layout>
-	<Welcome />
+	<!--<Welcome />-->
+	<div class="min-h-screen flex justify-center items-center">
+		<div class="max-w-4xl mx-auto">
+			<div class="flex justify-start items-center gap-x-3">
+				<h1 class="text-left text-[70px] text-red-500 neon-text">
+					Samuel Barraud
+				</h1>
+				<Image src={me} alt="Samuel Barraud" class="rounded-full size-16 mx-auto" />
+			</div>
+			<p class="text-left text-white text-lg mt-4">
+				Hi, I'm sam, a 🇫🇷 fulltack web developer builindg stuff in Seoul 🇰🇷.
+			</p>
+			<p class="text-left text-white text-lg mt-4">
+				Feel free to contact me by <a href="mailto:contact@iterar.net" class="text-red-500 underline bold">email</a> or on social media.
+			</p>
+			<div class="flex justify-start items-center gap-x-4 mt-8">
+				<a href="https://x.com/sam_iterar" target="_blank" class="rounded-xl bg-white p-1.5 size-12">
+					<Image class="h-full w-full rounded-lg object-cover" src={twitter} alt="x" />
+				</a>
+				<a href="https://github.com/barraudSamuel" target="_blank" class="rounded-xl bg-white p-1.5 size-12">
+					<Image class="h-full w-full rounded-lg object-cover" src={github} alt="github" />
+				</a>
+				<a href="https://www.youtube.com/@sam_73616d" target="_blank" class="rounded-xl bg-white p-1.5 size-12">
+					<Image class="h-full w-full rounded-lg object-cover" src={youtube} alt="youtube" />
+				</a>
+			</div>
+			<hr class="border-white mt-8" />
+			<p class="text-white mt-8">Projects :</p>
+			<div class="flex justify-start items-center gap-x-4 mt-4">
+				<a href="https://ccup.io" target="_blank" class="rounded-xl bg-white p-1.5 size-12">
+					<Image class="h-full w-full rounded-lg object-cover" src={ccup} alt="ccup.io" />
+				</a>
+				<a href="https://scan-translator.com" target="_blank" class="rounded-xl bg-white p-1.5 size-12">
+					<Image class="h-full w-full rounded-lg object-cover" src={scanTranslator} alt="scan translator" />
+				</a>
+				<a href="https://lavot.ro" target="_blank" class="rounded-xl bg-white p-1.5 size-12">
+					<Image class="h-full w-full rounded-lg object-cover" src={lavot} alt="lavot.ro" />
+				</a>
+				<a href="https://upcoming-games-releases.com/" target="_blank" class="rounded-xl bg-white p-1.5 size-12">
+					<Image class="h-full w-full rounded-lg object-cover" src={upcomingGames} alt="upcoming-games-releases" />
+				</a>
+			</div>
+		</div>
+	</div>
 </Layout>
+
+<style>
+	h1 {
+		font-family: 'Robit', sans-serif;
+		font-weight: 900;
+		width: 100%;
+	}
+	.neon-text {
+		text-shadow:
+			0 0 2px rgba(255, 50, 50, 0.6),
+			0 0 4px rgba(255, 0, 0, 0.5),
+			0 0 8px rgba(255, 0, 0, 0.3),
+			0 0 12px rgba(255, 0, 0, 0.2);
+		filter: brightness(1.1);
+	}
+</style>
