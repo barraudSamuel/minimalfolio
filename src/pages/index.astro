@@ -31,8 +31,19 @@ import { Image } from 'astro:assets';
 			<p class="text-left text-white text-lg mt-4">
 				Feel free to contact me by <a href="mailto:contact@iterar.net" class="text-red-500 underline bold">email</a> or on social media.
 			</p>
+
+			<div class="relative mt-6">
+				<div class="p-4 rounded-xl bg-gray-900 border border-gray-700 shadow">
+					<div class="flex items-center">
+						<div class="h-3 w-3 rounded-full bg-green-500 mr-2 pulse-dot"></div>
+						<p class="text-white font-medium">Available for work</p>
+					</div>
+					<p class="text-white/80 text-sm mt-2">I'm currently open to freelance projects and full-time opportunities</p>
+				</div>
+			</div>
+
 			<div class="flex justify-start items-center gap-x-4 mt-8">
-    <a href="https://x.com/sam__brd" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+				<a href="https://x.com/sam__brd" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
 					<Image class="h-full w-full rounded-lg object-cover" src={twitter} alt="x" />
 				</a>
 				<a href="https://github.com/barraudSamuel" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
@@ -75,5 +86,45 @@ import { Image } from 'astro:assets';
 			0 0 8px rgba(255, 0, 0, 0.3),
 			0 0 12px rgba(255, 0, 0, 0.2);
 		filter: brightness(1.1);
+	}
+
+	.pulse-dot {
+		position: relative;
+		animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+
+	.pulse-dot::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 100%;
+		height: 100%;
+		background: rgba(74, 222, 128, 0.4);
+		border-radius: 50%;
+		transform: translate(-50%, -50%);
+		animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+
+	@keyframes pulse-glow {
+		0%, 100% {
+			opacity: 1;
+			box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+		}
+		50% {
+			opacity: 0.7;
+			box-shadow: 0 0 16px rgba(74, 222, 128, 0.8);
+		}
+	}
+
+	@keyframes pulse-ring {
+		0% {
+			transform: translate(-50%, -50%) scale(1);
+			opacity: 0.8;
+		}
+		100% {
+			transform: translate(-50%, -50%) scale(2.5);
+			opacity: 0;
+		}
 	}
 </style>
