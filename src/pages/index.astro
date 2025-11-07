@@ -11,125 +11,171 @@ import upcomingGames from '../assets/upcoming-games.webp';
 import scanTranslator from '../assets/scan-translator.webp';
 import lavot from '../assets/lavot.webp';
 import stickMe from '../assets/stickMe.webp';
-import { Image } from 'astro:assets';
+import laravel from '../assets/tech-laravel.webp';
+import js from '../assets/tech-js.webp';
+import pgsql from '../assets/tech-pgsql.webp';
+import react from '../assets/tech-react.webp';
+import tailwind from '../assets/tech-tailwind.webp';
+import vue from '../assets/tech-vue.webp';
+import {Image} from 'astro:assets';
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 <Layout>
-	<!--<Welcome />-->
-	<div class="min-h-screen flex justify-center items-center">
-		<div class="max-w-4xl mx-auto md:px-0 px-5">
-			<div class="flex justify-start items-center gap-x-3">
-				<h1 class="text-left text-[40px] leading-none md:text-[70px] text-red-500 neon-text">
-					Samuel Barraud
-				</h1>
-				<Image src={me} alt="Samuel Barraud" class="rounded-full size-16 mx-auto" />
-			</div>
-			<p class="text-left text-white text-lg mt-4">
-				Hi, I'm sam, a 🇫🇷 fulltack web developer builindg stuff in Seoul 🇰🇷.
-			</p>
-			<p class="text-left text-white text-lg mt-4">
-				Feel free to contact me by <a href="mailto:contact@sambrd.xyz" class="text-red-500 underline bold">email</a> or on social media.
-			</p>
+    <!--<Welcome />-->
+    <div class="min-h-screen flex justify-center items-center">
+        <div class="max-w-4xl mx-auto md:px-0 px-5">
+            <div class="flex justify-start items-center gap-x-3">
+                <h1 class="text-left text-[40px] leading-none md:text-[70px] text-red-500 neon-text">
+                    Samuel Barraud
+                </h1>
+                <Image src={me} alt="Samuel Barraud" class="rounded-full size-16 mx-auto"/>
+            </div>
+            <p class="text-left text-white text-lg mt-4">
+                Hi, I’m Sam, a 🇫🇷 full-stack web developer with 7 years of experience, building stuff in Seoul 🇰🇷.
+            </p>
+            <p class="text-left text-white text-lg mt-4">
+                Feel free to contact me by <a href="mailto:contact@sambrd.xyz"
+                                              class="text-red-500 underline bold">email</a> or on social media.
+            </p>
 
-			<div class="relative mt-6">
-    <a href="mailto:contact@sambrd.xyz" class="p-4 block rounded-xl bg-gray-900 border border-gray-700 shadow transition-all duration-300 hover:scale-101 hover:shadow-lg hover:border-gray-500">
-					<div class="flex items-center">
-						<div class="h-3 w-3 rounded-full bg-green-500 mr-2 pulse-dot"></div>
-						<p class="text-white font-medium">Available for work</p>
-					</div>
-					<p class="text-white/80 text-sm mt-2">I'm currently open to freelance projects and full-time opportunities</p>
-					<p class="text-white/80 text-sm mt-2">contact@sambrd.xyz</p>
-				</a>
-			</div>
-
-			<div class="flex justify-start items-center gap-x-4 mt-8">
-				<a href="https://x.com/sam__brd" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-					<Image class="h-full w-full rounded-lg object-cover" src={twitter} alt="x" />
-				</a>
-				<a href="https://github.com/barraudSamuel" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-					<Image class="h-full w-full rounded-lg object-cover" src={github} alt="github" />
-				</a>
-				<a href="https://www.youtube.com/@sam_brd" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-					<Image class="h-full w-full rounded-lg object-cover" src={youtube} alt="youtube" />
-				</a>
-			</div>
-			<hr class="border-white mt-8" />
-			<p class="text-white mt-8">Projects :</p>
-			<div class="flex justify-start items-center gap-x-4 mt-4">
-				<a href="https://ccup.io" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-					<Image class="h-full w-full rounded-lg object-cover" src={ccup} alt="ccup.io" />
-				</a>
-				<a href="https://scan-translator.com" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-					<Image class="h-full w-full rounded-lg object-cover" src={scanTranslator} alt="scan translator" />
-				</a>
-				<a href="https://lavot.ro" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-					<Image class="h-full w-full rounded-lg object-cover" src={lavot} alt="lavot.ro" />
-				</a>
-				<a href="https://upcoming-games-releases.com/" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-					<Image class="h-full w-full rounded-lg object-cover" src={upcomingGames} alt="upcoming-games-releases" />
-				</a>
-                <a href="https://stick-me.com/" target="_blank" class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={stickMe} alt="stick-me" />
+            <div class="relative mt-6">
+                <a href="mailto:contact@sambrd.xyz"
+                   class="p-4 block rounded-xl bg-gray-900 border border-gray-700 shadow transition-all duration-300 hover:scale-101 hover:shadow-lg hover:border-gray-500">
+                    <div class="flex items-center">
+                        <div class="h-3 w-3 rounded-full bg-green-500 mr-2 pulse-dot"></div>
+                        <p class="text-white font-medium">Available for work</p>
+                    </div>
+                    <p class="text-white/80 text-sm mt-2">I'm currently open to freelance projects and full-time
+                        opportunities</p>
+                    <p class="text-white/80 text-sm mt-2">contact@sambrd.xyz</p>
                 </a>
-			</div>
-		</div>
-	</div>
+            </div>
+
+            <div class="flex justify-start items-center gap-x-4 mt-8">
+                <a href="https://x.com/sam__brd" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={twitter} alt="x"/>
+                </a>
+                <a href="https://github.com/barraudSamuel" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={github} alt="github"/>
+                </a>
+                <a href="https://www.youtube.com/@sam_brd" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={youtube} alt="youtube"/>
+                </a>
+            </div>
+            <hr class="border-white mt-8"/>
+            <p class="text-white mt-8">Tech stack :</p>
+            <div class="flex justify-start items-center gap-x-4 mt-4">
+                <a href="https://laravel.com" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={laravel} alt="laravel"/>
+                </a>
+                <a href="https://vuejs.org/" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={vue} alt="vuejs"/>
+                </a>
+                <a href="https://www.postgresql.org/" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={pgsql} alt="postgresql"/>
+                </a>
+                <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={js} alt="javascript"/>
+                </a>
+                <a href="https://tailwindcss.com/" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={tailwind} alt="tailwind"/>
+                </a>
+                <a href="https://reactnative.dev/" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={react} alt="react-native"/>
+                </a>
+            </div>
+            <p class="text-white mt-8">Projects :</p>
+            <div class="flex justify-start items-center gap-x-4 mt-4">
+                <a href="https://ccup.io" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={ccup} alt="ccup.io"/>
+                </a>
+                <a href="https://scan-translator.com" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={scanTranslator} alt="scan translator"/>
+                </a>
+                <a href="https://lavot.ro" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={lavot} alt="lavot.ro"/>
+                </a>
+                <a href="https://upcoming-games-releases.com/" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={upcomingGames}
+                           alt="upcoming-games-releases"/>
+                </a>
+                <a href="https://stick-me.com/" target="_blank"
+                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
+                    <Image class="h-full w-full rounded-lg object-cover" src={stickMe} alt="stick-me"/>
+                </a>
+            </div>
+
+        </div>
+    </div>
 </Layout>
 
 <style>
-	h1 {
-		font-family: 'Robit', sans-serif;
-		font-weight: 900;
-		width: 100%;
-	}
-	.neon-text {
-		text-shadow:
-			0 0 2px rgba(255, 50, 50, 0.6),
-			0 0 4px rgba(255, 0, 0, 0.5),
-			0 0 8px rgba(255, 0, 0, 0.3),
-			0 0 12px rgba(255, 0, 0, 0.2);
-		filter: brightness(1.1);
-	}
+    h1 {
+        font-family: 'Robit', sans-serif;
+        font-weight: 900;
+        width: 100%;
+    }
 
-	.pulse-dot {
-		position: relative;
-		animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-	}
+    .neon-text {
+        text-shadow: 0 0 2px rgba(255, 50, 50, 0.6),
+        0 0 4px rgba(255, 0, 0, 0.5),
+        0 0 8px rgba(255, 0, 0, 0.3),
+        0 0 12px rgba(255, 0, 0, 0.2);
+        filter: brightness(1.1);
+    }
 
-	.pulse-dot::before {
-		content: '';
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 100%;
-		height: 100%;
-		background: rgba(74, 222, 128, 0.4);
-		border-radius: 50%;
-		transform: translate(-50%, -50%);
-		animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-	}
+    .pulse-dot {
+        position: relative;
+        animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
 
-	@keyframes pulse-glow {
-		0%, 100% {
-			opacity: 1;
-			box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
-		}
-		50% {
-			opacity: 0.7;
-			box-shadow: 0 0 16px rgba(74, 222, 128, 0.8);
-		}
-	}
+    .pulse-dot::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        background: rgba(74, 222, 128, 0.4);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
 
-	@keyframes pulse-ring {
-		0% {
-			transform: translate(-50%, -50%) scale(1);
-			opacity: 0.8;
-		}
-		100% {
-			transform: translate(-50%, -50%) scale(2.5);
-			opacity: 0;
-		}
-	}
+    @keyframes pulse-glow {
+        0%, 100% {
+            opacity: 1;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+        }
+        50% {
+            opacity: 0.7;
+            box-shadow: 0 0 16px rgba(74, 222, 128, 0.8);
+        }
+    }
+
+    @keyframes pulse-ring {
+        0% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.8;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(2.5);
+            opacity: 0;
+        }
+    }
 </style>
