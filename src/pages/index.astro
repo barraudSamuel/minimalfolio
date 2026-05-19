@@ -1,184 +1,429 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Welcome from "../components/Welcome.astro";
+import GithubContributions from "../components/GithubContributions.astro";
+import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
-import me from '../assets/me.jpg';
-import twitter from '../assets/twitter.webp';
-import youtube from '../assets/youtube.webp';
-import github from '../assets/github.webp';
-import screenCcup from '../assets/screen-ccup.webp';
-import screenScanTranslator from '../assets/screen-sc.webp';
-import screenLavot from '../assets/screen-lavot.webp';
-import screenUpcomingGames from '../assets/screen-upcoming-games.webp';
-import screenStickMe from '../assets/screen-stick-me.webp';
-import laravel from '../assets/tech-laravel.webp';
-import js from '../assets/tech-js.webp';
-import pgsql from '../assets/tech-pgsql.webp';
-import react from '../assets/tech-react.webp';
-import tailwind from '../assets/tech-tailwind.webp';
-import vue from '../assets/tech-vue.webp';
-import {Image} from 'astro:assets';
+import YoutubeIcon from "../components/icons/YoutubeIcon.astro";
+import GithubIcon from "../components/icons/GithubIcon.astro";
+import XIcon from "../components/icons/XIcon.astro";
+import EmailIcon from "../components/icons/EmailIcon.astro";
+import me from "../assets/me.jpg";
+import twitter from "../assets/twitter.webp";
+import youtube from "../assets/youtube.webp";
+import github from "../assets/github.webp";
+import screenCcup from "../assets/screen-ccup.webp";
+import screenScanTranslator from "../assets/screen-scan-translator.png";
+import screenJobx from "../assets/screen-jobx.png";
+import screenLavot from "../assets/screen-lavot.webp";
+import screenUpcomingGames from "../assets/screen-upcoming-games.webp";
+import screenStickMe from "../assets/screen-stick-me.webp";
+import laravel from "../assets/tech-laravel.webp";
+import js from "../assets/tech-js.webp";
+import pgsql from "../assets/tech-pgsql.webp";
+import react from "../assets/tech-react.webp";
+import tailwind from "../assets/tech-tailwind.webp";
+import vue from "../assets/tech-vue.webp";
+import meLightVideo from "../assets/videos/me-light.mp4";
+import meDarkVideo from "../assets/videos/me-dark.mp4";
+import meDarkVideo3 from "../assets/videos/me-dark4.mp4";
+import { Image } from "astro:assets";
 
 const projects = [
     {
-        name: 'CCup',
-        summary: 'Landing page + conversion experiments for a high-volume SaaS launch.',
-        badge: 'SaaS platform',
-        url: 'https://ccup.io',
+        name: "ccup.io",
+        summary:
+            "Landing page + conversion experiments for a high-volume SaaS launch.",
+        badge: "SaaS platform",
+        url: "https://ccup.io",
         screenshot: screenCcup,
+        display: true,
     },
     {
-        name: 'Scan Translator',
-        summary: 'Camera-first utility app with real-time OCR to translation workflow.',
-        badge: 'Mobile utility',
-        url: 'https://scan-translator.com',
+        name: "Scan Translator",
+        summary: "Browser extension for manga OCR and translation workflows.",
+        badge: "Browser extension",
+        url: "https://scan-translator.com",
         screenshot: screenScanTranslator,
+        display: true,
     },
     {
-        name: 'LaVOT',
-        summary: 'Story-driven brand site blending editorial layouts with e-commerce flows.',
-        badge: 'Brand experience',
-        url: 'https://lavot.ro',
+        name: "jobx.dev",
+        summary:
+            "Job aggregator that curates fresh tech opportunities posted on Twitter/X.",
+        badge: "Job aggregator",
+        url: "https://jobx.dev",
+        screenshot: screenJobx,
+        display: true,
+    },
+    {
+        name: "Lavot",
+        summary:
+            "Story-driven brand site blending editorial layouts with e-commerce flows.",
+        badge: "Brand experience",
+        url: "https://lavot.ro",
         screenshot: screenLavot,
+        display: false,
     },
     {
-        name: 'Upcoming Games Releases',
-        summary: 'Content hub that tracks launch calendars for PC, console, and indie titles.',
-        badge: 'Content platform',
-        url: 'https://upcoming-games-releases.com/',
+        name: "Upcoming Games Releases",
+        summary:
+            "Content hub that tracks launch calendars for PC, console, and indie titles.",
+        badge: "Content platform",
+        url: "https://upcoming-games-releases.com/",
         screenshot: screenUpcomingGames,
+        display: true,
     },
     {
-        name: 'Stick Me',
-        summary: 'Custom merch storefront with playful UI and rich product imagery.',
-        badge: 'E-commerce',
-        url: 'https://stick-me.com/',
+        name: "Stick Me",
+        summary:
+            "Custom merch storefront with playful UI and rich product imagery.",
+        badge: "E-commerce",
+        url: "https://stick-me.com/",
         screenshot: screenStickMe,
+        display: false,
     },
 ];
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// f6f7f2
+//0e29c3
 ---
+
 <Layout>
+    <div class="bg-light min-h-screen flex flex-col justify-start items-center">
+        <section class="max-w-4xl w-full mt-12">
+            <div class="flex flex-col justify-center items-center gap-10">
+                <div class="size-60 shrink-0">
+                    <video
+                        src={meDarkVideo3}
+                        class="h-full w-full object-cover"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        aria-hidden="true"></video>
+                </div>
+                <div class="px-5">
+                    <h1
+                        class="text-klein text-7xl font-semibold text-center font-doto"
+                    >
+                        samuel barraud
+                    </h1>
+                    <p
+                        class="text-center text-klein font-inconsolata text-md mt-4 max-w-2xl tracking-tight"
+                    >
+                        hi, I’m Sam, a 🇫🇷 full-stack web developer with 7 years
+                        of experience, building stuff in Seoul 🇰🇷.
+                    </p>
+                    <div
+                        class="mt-8 flex items-center justify-center gap-2 text-klein"
+                    >
+                        <a
+                            href="https://www.youtube.com/@sam_brd"
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label="YouTube"
+                            class="flex size-16 items-center justify-center transition duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
+                        >
+                            <YoutubeIcon class="size-6" />
+                        </a>
+                        <a
+                            href="https://github.com/barraudSamuel"
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label="GitHub"
+                            class="flex size-16 items-center justify-center transition duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
+                        >
+                            <GithubIcon class="size-6" />
+                        </a>
+                        <a
+                            href="https://x.com/sam__brd"
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label="X"
+                            class="flex size-16 items-center justify-center transition duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
+                        >
+                            <XIcon class="size-6" />
+                        </a>
+                        <a
+                            href="mailto:contact@sambrd.xyz"
+                            aria-label="Email"
+                            class="flex size-16 items-center justify-center transition duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
+                        >
+                            <EmailIcon class="size-6" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <GithubContributions />
+        <section class="w-full max-w-2xl mt-32 pb-20 px-5">
+            <div class="flex flex-col items-center gap-3 text-center">
+                <h2
+                    class="font-doto text-4xl font-semibold text-klein tracking-tighter"
+                >
+                    check out my latest work
+                </h2>
+            </div>
+
+            <div class="mt-10 grid grid-cols-1 gap-10 md:grid-cols-2">
+                {
+                    projects
+                        .filter((project) => project.display)
+                        .map((project) => (
+                            <a
+                                href={project.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                class="group block bg-klein focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
+                            >
+                                <div class="aspect-4/3 overflow-hidden">
+                                    <Image
+                                        src={project.screenshot}
+                                        alt={`${project.name} screenshot`}
+                                        class="h-full w-full object-cover"
+                                    />
+                                </div>
+
+                                <div class="p-3 flex items-start justify-between gap-4">
+                                    <div>
+                                        <h3 class="mt-1 font-inconsolata text-sm text-light">
+                                            {project.name}
+                                        </h3>
+                                    </div>
+                                    <svg
+                                        class="mt-1 size-6 shrink-0 text-light transition-transform duration-200 group-hover:rotate-45 group-focus-visible:rotate-45"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M7 17 17 7" />
+                                        <path d="M8 7h9v9" />
+                                    </svg>
+                                </div>
+                            </a>
+                        ))
+                }
+            </div>
+        </section>
+    </div>
     <!--<Welcome />-->
-    <div class="min-h-screen flex justify-center items-center">
+    <!-- Legacy homepage section kept for reference.
+    <div class="hidden min-h-screen flex justify-center items-center">
         <div class="max-w-4xl mx-auto md:px-0 px-5 py-20">
             <div class="flex justify-start items-center gap-x-3">
-                <h1 class="text-left text-[40px] leading-none md:text-[70px] text-red-500 neon-text">
+                <h1
+                    class="text-left text-[40px] leading-none md:text-[70px] text-red-500 neon-text"
+                >
                     Samuel Barraud
                 </h1>
-                <Image src={me} alt="Samuel Barraud" class="rounded-full size-16 mx-auto"/>
+                <Image
+                    src={me}
+                    alt="Samuel Barraud"
+                    class="rounded-full size-16 mx-auto"
+                />
             </div>
             <p class="text-left text-white text-lg mt-4">
-                Hi, I’m Sam, a 🇫🇷 full-stack web developer with 7 years of experience, building stuff in Seoul 🇰🇷.
+                Hi, I’m Sam, a 🇫🇷 full-stack web developer with 7 years of
+                experience, building stuff in Seoul 🇰🇷.
             </p>
             <p class="text-left text-white text-lg mt-4">
-                Feel free to contact me by <a href="mailto:contact@sambrd.xyz"
-                                              class="text-red-500 underline bold">email</a> or on social media.
+                Feel free to contact me by <a
+                    href="mailto:contact@sambrd.xyz"
+                    class="text-red-500 underline bold">email</a
+                > or on social media.
             </p>
 
             <div class="relative mt-6">
-                <a href="mailto:contact@sambrd.xyz"
-                   class="p-4 block rounded-xl bg-gray-900 border border-gray-700 shadow transition-all duration-300 hover:scale-101 hover:shadow-lg hover:border-gray-500">
+                <a
+                    href="mailto:contact@sambrd.xyz"
+                    class="p-4 block rounded-xl bg-gray-900 border border-gray-700 shadow transition-all duration-300 hover:scale-101 hover:shadow-lg hover:border-gray-500"
+                >
                     <div class="flex items-center">
-                        <div class="h-3 w-3 rounded-full bg-green-500 mr-2 pulse-dot"></div>
+                        <div
+                            class="h-3 w-3 rounded-full bg-green-500 mr-2 pulse-dot"
+                        >
+                        </div>
                         <p class="text-white font-medium">Available for work</p>
                     </div>
-                    <p class="text-white/80 text-sm mt-2">I'm currently open to freelance projects and full-time
-                        opportunities</p>
+                    <p class="text-white/80 text-sm mt-2">
+                        I'm currently open to freelance projects and full-time
+                        opportunities
+                    </p>
                     <p class="text-white/80 text-sm mt-2">contact@sambrd.xyz</p>
                 </a>
             </div>
 
             <div class="flex justify-start items-center gap-x-4 mt-8">
-                <a href="https://x.com/sam__brd" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={twitter} alt="x"/>
+                <a
+                    href="https://x.com/sam__brd"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={twitter}
+                        alt="x"
+                    />
                 </a>
-                <a href="https://github.com/barraudSamuel" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={github} alt="github"/>
+                <a
+                    href="https://github.com/barraudSamuel"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={github}
+                        alt="github"
+                    />
                 </a>
-                <a href="https://www.youtube.com/@sam_brd" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={youtube} alt="youtube"/>
+                <a
+                    href="https://www.youtube.com/@sam_brd"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={youtube}
+                        alt="youtube"
+                    />
                 </a>
             </div>
-            <hr class="border-white mt-8"/>
+            <hr class="border-white mt-8" />
             <p class="text-white mt-8">Tech stack :</p>
             <div class="flex justify-start items-center gap-x-4 mt-4">
-                <a href="https://laravel.com" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={laravel} alt="laravel"/>
+                <a
+                    href="https://laravel.com"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={laravel}
+                        alt="laravel"
+                    />
                 </a>
-                <a href="https://vuejs.org/" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={vue} alt="vuejs"/>
+                <a
+                    href="https://vuejs.org/"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={vue}
+                        alt="vuejs"
+                    />
                 </a>
-                <a href="https://www.postgresql.org/" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={pgsql} alt="postgresql"/>
+                <a
+                    href="https://www.postgresql.org/"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={pgsql}
+                        alt="postgresql"
+                    />
                 </a>
-                <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={js} alt="javascript"/>
+                <a
+                    href="https://developer.mozilla.org/fr/docs/Web/JavaScript"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={js}
+                        alt="javascript"
+                    />
                 </a>
-                <a href="https://tailwindcss.com/" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={tailwind} alt="tailwind"/>
+                <a
+                    href="https://tailwindcss.com/"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={tailwind}
+                        alt="tailwind"
+                    />
                 </a>
-                <a href="https://reactnative.dev/" target="_blank"
-                   class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3">
-                    <Image class="h-full w-full rounded-lg object-cover" src={react} alt="react-native"/>
+                <a
+                    href="https://reactnative.dev/"
+                    target="_blank"
+                    class="rounded-xl bg-white p-1.5 size-12 transition-all duration-300 hover:scale-110 hover:rotate-3"
+                >
+                    <Image
+                        class="h-full w-full rounded-lg object-cover"
+                        src={react}
+                        alt="react-native"
+                    />
                 </a>
             </div>
             <p class="text-white mt-8">Projects :</p>
             <div class="grid gap-4 mt-4 md:grid-cols-2">
-                {projects.map((project) => (
-                    <a href={project.url} target="_blank"
-                       class="group rounded-2xl border border-white/10 bg-gray-900 backdrop-blur-sm overflow-hidden shadow-lg shadow-black/30 transition-all duration-300 hover:-translate-y-1 hover:border-white/30">
-                        <div class="relative aspect-video overflow-hidden">
-                            <Image src={project.screenshot} alt={`${project.name} screenshot`}
-                                   class="h-full w-full object-cover transition duration-500 group-hover:scale-105"/>
-                            <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 transition duration-300 group-hover:opacity-60"></div>
-                        </div>
-                        <div class="p-4 flex flex-col gap-y-2">
-                            <div>
-                                <h3 class="text-white text-xl font-semibold">{project.name}</h3>
-                                <p class="text-white/70 text-sm mt-1 leading-relaxed">{project.summary}</p>
-                            </div>
-                            <div class="flex items-center text-red-400 text-sm font-medium mt-2 gap-x-1">
-                                <span>View case</span>
-                                <svg class="size-4 transition-transform duration-300 group-hover:translate-x-1"
-                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </a>
-                ))}
+                {
+                    projects
+                        .filter((project) => project.display)
+                        .map((project) => (
+                            <a
+                                href={project.url}
+                                target="_blank"
+                                class="group rounded-2xl border border-white/10 bg-gray-900 backdrop-blur-sm overflow-hidden shadow-lg shadow-black/30 transition-all duration-300 hover:-translate-y-1 hover:border-white/30"
+                            >
+                                <div class="relative aspect-video overflow-hidden">
+                                    <Image
+                                        src={project.screenshot}
+                                        alt={`${project.name} screenshot`}
+                                        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                    />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 transition duration-300 group-hover:opacity-60" />
+                                </div>
+                                <div class="p-4 flex flex-col gap-y-2">
+                                    <div>
+                                        <h3 class="text-white text-xl font-semibold">
+                                            {project.name}
+                                        </h3>
+                                        <p class="text-white/70 text-sm mt-1 leading-relaxed">
+                                            {project.summary}
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center text-red-400 text-sm font-medium mt-2 gap-x-1">
+                                        <span>View case</span>
+                                        <svg
+                                            class="size-4 transition-transform duration-300 group-hover:translate-x-1"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <path d="M5 12h14" />
+                                            <path d="m12 5 7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </a>
+                        ))
+                }
             </div>
-
         </div>
     </div>
+    -->
 </Layout>
 
 <style>
-    h1 {
-        font-family: 'Robit', sans-serif;
-        font-weight: 900;
-        width: 100%;
-    }
-
     .neon-text {
-        text-shadow: 0 0 2px rgba(255, 50, 50, 0.6),
-        0 0 4px rgba(255, 0, 0, 0.5),
-        0 0 8px rgba(255, 0, 0, 0.3),
-        0 0 12px rgba(255, 0, 0, 0.2);
+        text-shadow:
+            0 0 2px rgba(255, 50, 50, 0.6),
+            0 0 4px rgba(255, 0, 0, 0.5),
+            0 0 8px rgba(255, 0, 0, 0.3),
+            0 0 12px rgba(255, 0, 0, 0.2);
         filter: brightness(1.1);
     }
 
@@ -188,7 +433,7 @@ const projects = [
     }
 
     .pulse-dot::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 50%;
         left: 50%;
@@ -201,7 +446,8 @@ const projects = [
     }
 
     @keyframes pulse-glow {
-        0%, 100% {
+        0%,
+        100% {
             opacity: 1;
             box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
         }

@@ -1,3 +1,7 @@
+---
+const currentYear = new Date().getFullYear()
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -20,6 +24,11 @@
 	</head>
 	<body class="bg-gray-950">
 		<slot />
+		<footer
+			class="bg-light px-6 py-8 text-center font-inconsolata text-xs text-klein/60"
+		>
+			© {currentYear} Samuel Barraud
+		</footer>
 	</body>
 </html>
 

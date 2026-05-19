@@ -1,0 +1,265 @@
+---
+type ContributionDay = {
+    date: string;
+    contributionCount: number;
+};
+
+type ContributionWeek = {
+    contributionDays: ContributionDay[];
+};
+
+type ContributionCalendar = {
+    totalContributions: number;
+    weeks: ContributionWeek[];
+};
+
+const username = import.meta.env.GITHUB_USERNAME ?? "barraudSamuel";
+const token = import.meta.env.GITHUB_TOKEN;
+
+let calendar: ContributionCalendar | null = null;
+
+if (token) {
+    try {
+        const query = `
+            query($userName: String!) {
+                user(login: $userName) {
+                    contributionsCollection {
+                        contributionCalendar {
+                            totalContributions
+                            weeks {
+                                contributionDays {
+                                    date
+                                    contributionCount
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const response = await fetch("https://api.github.com/graphql", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                query,
+                variables: {
+                    userName: username,
+                },
+            }),
+        });
+
+        const json = await response.json();
+
+        if (response.ok && !json.errors) {
+            calendar =
+                json.data.user.contributionsCollection.contributionCalendar;
+        }
+    } catch {
+        calendar = null;
+    }
+}
+
+const dateFormatter = new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+});
+
+const monthFormatter = new Intl.DateTimeFormat("en", {
+    month: "short",
+});
+
+const monthLabels =
+    calendar?.weeks.map((week, index, weeks) => {
+        const currentDate = new Date(
+            `${week.contributionDays[0].date}T00:00:00Z`,
+        );
+        const previousWeek = weeks[index - 1];
+
+        if (!previousWeek) {
+            return monthFormatter.format(currentDate);
+        }
+
+        const previousDate = new Date(
+            `${previousWeek.contributionDays[0].date}T00:00:00Z`,
+        );
+
+        if (currentDate.getUTCMonth() !== previousDate.getUTCMonth()) {
+            return monthFormatter.format(currentDate);
+        }
+
+        return "";
+    }) ?? [];
+
+const maxContributions = Math.max(
+    1,
+    ...(calendar?.weeks.flatMap((week) =>
+        week.contributionDays.map((day) => day.contributionCount),
+    ) ?? []),
+);
+
+const getContributionColor = (contributionCount: number) => {
+    const intensity =
+        contributionCount === 0
+            ? 8
+            : Math.round(28 + (contributionCount / maxContributions) * 72);
+
+    return `color-mix(in srgb, var(--color-klein) ${intensity}%, transparent)`;
+};
+
+const getContributionLabel = (day: ContributionDay) => {
+    const contributionText =
+        day.contributionCount > 1
+            ? `${day.contributionCount} commits`
+            : `${day.contributionCount} commit`;
+
+    return `${contributionText} on ${dateFormatter.format(
+        new Date(`${day.date}T00:00:00Z`),
+    )}`;
+};
+---
+
+<section class="w-full max-w-3xl mt-6 px-5 md:px-0">
+    <div class="flex flex-col gap-1 text-klein">
+        <div
+            class="flex flex-col gap-1 md:flex-row md:items-end md:justify-between"
+        >
+            <div>
+                <h2 class="font-inconsolata text-sm">
+                    {
+                        calendar
+                            ? `${calendar.totalContributions} contributions`
+                            : "contributions"
+                    }
+                </h2>
+            </div>
+        </div>
+
+        {
+            calendar ? (
+                <div>
+                    <div class="overflow-hidden pb-1">
+                        <div class="flex justify-end">
+                            <div class="flex shrink-0 gap-1">
+                                {calendar.weeks.map((week) => (
+                                    <div class="grid grid-rows-7 gap-1">
+                                        {week.contributionDays.map((day) => (
+                                            <span
+                                                class="block size-3 cursor-default"
+                                                style={`background-color: ${getContributionColor(day.contributionCount)}`}
+                                                data-contribution-label={getContributionLabel(
+                                                    day,
+                                                )}
+                                                aria-label={getContributionLabel(
+                                                    day,
+                                                )}
+                                            />
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div class="border border-klein/25 p-4 font-inconsolata text-sm text-klein/70">
+                    GitHub activity temporarily unavailable.
+                </div>
+            )
+        }
+    </div>
+</section>
+
+<script>
+    const tooltipId = "github-contribution-tooltip";
+    const tooltipOffset = 12;
+
+    const getTooltip = () => {
+        let tooltip = document.getElementById(tooltipId);
+
+        if (!tooltip) {
+            tooltip = document.createElement("div");
+            tooltip.id = tooltipId;
+            tooltip.className = "github-contribution-tooltip";
+            tooltip.setAttribute("role", "tooltip");
+            document.body.append(tooltip);
+        }
+
+        return tooltip;
+    };
+
+    const positionTooltip = (event: MouseEvent) => {
+        const tooltip = getTooltip();
+        const x = event.clientX;
+        const y = event.clientY;
+
+        tooltip.style.left = `${x + tooltipOffset}px`;
+        tooltip.style.top = `${y + tooltipOffset}px`;
+
+        const rect = tooltip.getBoundingClientRect();
+
+        if (rect.right > window.innerWidth - 8) {
+            tooltip.style.left = `${Math.max(8, x - rect.width - tooltipOffset)}px`;
+        }
+
+        if (rect.bottom > window.innerHeight - 8) {
+            tooltip.style.top = `${Math.max(8, y - rect.height - tooltipOffset)}px`;
+        }
+    };
+
+    const initContributionTooltips = () => {
+        document
+            .querySelectorAll<HTMLElement>(
+                "[data-contribution-label]:not([data-tooltip-ready])",
+            )
+            .forEach((day) => {
+                day.dataset.tooltipReady = "true";
+
+                day.addEventListener("mouseenter", (event) => {
+                    const tooltip = getTooltip();
+                    tooltip.textContent = day.dataset.contributionLabel ?? "";
+                    tooltip.dataset.visible = "true";
+                    positionTooltip(event);
+                });
+
+                day.addEventListener("mousemove", (event) => {
+                    positionTooltip(event);
+                });
+
+                day.addEventListener("mouseleave", () => {
+                    getTooltip().dataset.visible = "false";
+                });
+            });
+    };
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initContributionTooltips);
+    } else {
+        initContributionTooltips();
+    }
+</script>
+
+<style is:global>
+    .github-contribution-tooltip {
+        position: fixed;
+        z-index: 50;
+        max-width: calc(100vw - 1rem);
+        padding: 0.25rem 0.5rem;
+        background-color: var(--color-klein);
+        color: var(--color-light);
+        font-family: var(--font-inconsolata);
+        font-size: 0.75rem;
+        line-height: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+
+    .github-contribution-tooltip[data-visible="true"] {
+        opacity: 1;
+    }
+</style>
