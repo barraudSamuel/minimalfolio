@@ -23,9 +23,8 @@ import pgsql from "../assets/tech-pgsql.webp";
 import react from "../assets/tech-react.webp";
 import tailwind from "../assets/tech-tailwind.webp";
 import vue from "../assets/tech-vue.webp";
-import meLightVideo from "../assets/videos/me-light.mp4";
-import meDarkVideo from "../assets/videos/me-dark.mp4";
-import meDarkVideo3 from "../assets/videos/me-dark4.mp4";
+import heroVideo from "../assets/videos/me-dark-optimized.mp4";
+import heroPoster from "../assets/me-hero-poster.webp";
 import { Image } from "astro:assets";
 
 const projects = [
@@ -96,12 +95,17 @@ const projects = [
             <div class="flex flex-col justify-center items-center gap-10">
                 <div class="size-60 shrink-0">
                     <video
-                        src={meDarkVideo3}
+                        src={heroVideo}
+                        poster={heroPoster.src}
+                        width="480"
+                        height="480"
                         class="h-full w-full object-cover"
                         autoplay
                         muted
                         loop
                         playsinline
+                        preload="auto"
+                        fetchpriority="high"
                         aria-hidden="true"></video>
                 </div>
                 <div class="px-5">
@@ -182,6 +186,11 @@ const projects = [
                                     <Image
                                         src={project.screenshot}
                                         alt={`${project.name} screenshot`}
+                                        width={800}
+                                        widths={[320, 480, 640, 800]}
+                                        sizes="(min-width: 768px) 296px, calc(100vw - 40px)"
+                                        layout="constrained"
+                                        quality={70}
                                         class="h-full w-full object-cover"
                                     />
                                 </div>
