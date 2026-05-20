@@ -1,0 +1,754 @@
+---
+interface Props {
+    src: string;
+    poster?: string;
+    width?: number;
+    height?: number;
+    class?: string;
+    scale?: number;
+    spacing?: number;
+    outputWidth?: number;
+    outputHeight?: number;
+    columns?: number;
+    rows?: number;
+    cellGap?: number;
+    fps?: number;
+    brightness?: number;
+    contrast?: number;
+    saturation?: number;
+    hueRotation?: number;
+    gamma?: number;
+    intensity?: number;
+    color?: string;
+    secondaryColor?: string;
+    background?: string;
+    backgroundColor?: string;
+    characterColor?: string;
+    ink?: string;
+    paperInk?: string;
+    characterSet?: "blocks" | "dots" | "ascii";
+    characters?: string;
+    sharpness?: number;
+    solidThreshold?: number;
+    sourceScale?: number;
+    sourceOffsetX?: number;
+    sourceOffsetY?: number;
+    preload?: "auto" | "metadata" | "none";
+    fetchpriority?: "high" | "low" | "auto";
+}
+
+const {
+    src,
+    poster,
+    width = 480,
+    height = 480,
+    class: className = "",
+    scale,
+    spacing,
+    outputWidth,
+    outputHeight,
+    columns = 112,
+    rows = 67,
+    cellGap = 0,
+    fps = 18,
+    brightness = 1.08,
+    contrast = 1.3,
+    saturation = 1,
+    hueRotation = 0,
+    gamma = 1,
+    intensity = 1,
+    color,
+    secondaryColor,
+    background = "#f6f7f2",
+    backgroundColor,
+    characterColor,
+    ink = "#002fa7",
+    paperInk = "#002fa7",
+    characterSet = "blocks",
+    characters = " .:-=+*#%@",
+    sharpness,
+    solidThreshold = 0.72,
+    sourceScale = 0.94,
+    sourceOffsetX = 0,
+    sourceOffsetY = 0,
+    preload = "auto",
+    fetchpriority = "high",
+} = Astro.props;
+
+const resolvedColumns = outputWidth ?? columns;
+const resolvedRows = outputHeight ?? rows;
+const resolvedCellGap = spacing ?? cellGap;
+const resolvedBackground = backgroundColor ?? background;
+const resolvedInk = characterColor ?? color ?? ink;
+const resolvedPaperInk = secondaryColor ?? characterColor ?? color ?? paperInk;
+const resolvedSolidThreshold = sharpness ?? solidThreshold;
+const resolvedSourceScale = scale ?? sourceScale;
+---
+
+<div
+    class:list={["ascii-video", className]}
+    data-ascii-video
+    data-columns={resolvedColumns}
+    data-rows={resolvedRows}
+    data-row-ratio={resolvedRows / resolvedColumns}
+    data-cell-gap={resolvedCellGap}
+    data-fps={fps}
+    data-brightness={brightness}
+    data-contrast={contrast}
+    data-saturation={saturation}
+    data-hue-rotation={hueRotation}
+    data-gamma={gamma}
+    data-intensity={intensity}
+    data-background={resolvedBackground}
+    data-ink={resolvedInk}
+    data-paper-ink={resolvedPaperInk}
+    data-character-set={characterSet}
+    data-characters={characters}
+    data-solid-threshold={resolvedSolidThreshold}
+    data-source-scale={resolvedSourceScale}
+    data-source-offset-x={sourceOffsetX}
+    data-source-offset-y={sourceOffsetY}
+    style={`--ascii-aspect: ${width} / ${height}; --ascii-columns: ${resolvedColumns}; --ascii-background: ${resolvedBackground}; --ascii-ink: ${resolvedInk}; --ascii-source-scale: ${resolvedSourceScale}; --ascii-source-offset-x: ${sourceOffsetX * 100}%; --ascii-source-offset-y: ${sourceOffsetY * 100}%;`}
+    aria-hidden="true"
+>
+    {
+        poster && (
+            <img
+                data-ascii-fallback
+                src={poster}
+                width={width}
+                height={height}
+                alt=""
+                class="ascii-video__fallback"
+                loading="eager"
+                decoding="async"
+            />
+        )
+    }
+    <video
+        data-ascii-source
+        src={src}
+        poster={poster}
+        width={width}
+        height={height}
+        class="ascii-video__source"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload={preload}
+        fetchpriority={fetchpriority}
+    >
+    </video>
+    <canvas data-ascii-canvas class="ascii-video__canvas"></canvas>
+</div>
+
+<style>
+    .ascii-video {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        aspect-ratio: var(--ascii-aspect);
+        background: var(--ascii-background);
+        isolation: isolate;
+    }
+
+    .ascii-video::before,
+    .ascii-video::after {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        content: "";
+        pointer-events: none;
+    }
+
+    .ascii-video::before {
+        background: repeating-linear-gradient(
+            to right,
+            var(--ascii-ink) 0,
+            var(--ascii-ink) 0.55px,
+            transparent 0.55px,
+            transparent calc(100% / var(--ascii-columns))
+        );
+        mix-blend-mode: multiply;
+        opacity: 0.34;
+    }
+
+    .ascii-video::after {
+        background: repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 7px,
+            var(--ascii-ink) 7px,
+            var(--ascii-ink) 8.25px
+        );
+        mix-blend-mode: multiply;
+        opacity: 0.94;
+    }
+
+    .ascii-video__fallback,
+    .ascii-video__source,
+    .ascii-video__canvas {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+    }
+
+    .ascii-video__fallback {
+        z-index: 1;
+        opacity: 1;
+        transform: translate(
+                var(--ascii-source-offset-x),
+                var(--ascii-source-offset-y)
+            )
+            scale(var(--ascii-source-scale));
+        transition: opacity 160ms ease;
+    }
+
+    .ascii-video__source {
+        z-index: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .ascii-video__canvas {
+        z-index: 2;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+    }
+
+    .ascii-video.is-ascii-ready .ascii-video__fallback {
+        opacity: 0;
+    }
+
+    .ascii-video.is-ascii-ready .ascii-video__canvas {
+        opacity: 1;
+    }
+</style>
+
+<script>
+    type VideoWithFrameCallback = HTMLVideoElement & {
+        requestVideoFrameCallback?: (callback: (now: number) => void) => number;
+    };
+    type RgbColor = [number, number, number];
+
+    const clamp = (value: number, min: number, max: number) =>
+        Math.min(max, Math.max(min, value));
+
+    const readNumber = (value: string | undefined, fallback: number) => {
+        const parsed = Number.parseFloat(value ?? "");
+        return Number.isFinite(parsed) ? parsed : fallback;
+    };
+
+    const parseHexColor = (hex: string | undefined): RgbColor => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
+            hex ?? "",
+        );
+
+        if (!result) {
+            return [0, 0, 0];
+        }
+
+        return [
+            Number.parseInt(result[1], 16),
+            Number.parseInt(result[2], 16),
+            Number.parseInt(result[3], 16),
+        ];
+    };
+
+    const toRgba = (color: RgbColor, alpha: number) =>
+        `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${clamp(alpha, 0, 1)})`;
+
+    const rgbToHsl = (red: number, green: number, blue: number) => {
+        const max = Math.max(red, green, blue);
+        const min = Math.min(red, green, blue);
+        const lightness = (max + min) / 2;
+
+        if (max === min) {
+            return [0, 0, lightness] as const;
+        }
+
+        const delta = max - min;
+        const saturation =
+            lightness > 0.5
+                ? delta / (2 - max - min)
+                : delta / (max + min);
+        let hue = 0;
+
+        if (max === red) {
+            hue = (green - blue) / delta + (green < blue ? 6 : 0);
+        } else if (max === green) {
+            hue = (blue - red) / delta + 2;
+        } else {
+            hue = (red - green) / delta + 4;
+        }
+
+        return [hue / 6, saturation, lightness] as const;
+    };
+
+    const hueToRgb = (p: number, q: number, t: number) => {
+        let value = t;
+
+        if (value < 0) {
+            value += 1;
+        }
+
+        if (value > 1) {
+            value -= 1;
+        }
+
+        if (value < 1 / 6) {
+            return p + (q - p) * 6 * value;
+        }
+
+        if (value < 1 / 2) {
+            return q;
+        }
+
+        if (value < 2 / 3) {
+            return p + (q - p) * (2 / 3 - value) * 6;
+        }
+
+        return p;
+    };
+
+    const hslToRgb = (hue: number, saturation: number, lightness: number) => {
+        if (saturation === 0) {
+            return [lightness, lightness, lightness] as const;
+        }
+
+        const q =
+            lightness < 0.5
+                ? lightness * (1 + saturation)
+                : lightness + saturation - lightness * saturation;
+        const p = 2 * lightness - q;
+
+        return [
+            hueToRgb(p, q, hue + 1 / 3),
+            hueToRgb(p, q, hue),
+            hueToRgb(p, q, hue - 1 / 3),
+        ] as const;
+    };
+
+    const adjustColor = (
+        red: number,
+        green: number,
+        blue: number,
+        saturationAmount: number,
+        hueRotation: number,
+        gamma: number,
+    ) => {
+        const [hue, saturation, lightness] = rgbToHsl(red, green, blue);
+        const rotatedHue = (hue + hueRotation / 360 + 1) % 1;
+        const adjustedSaturation = clamp(saturation * saturationAmount, 0, 1);
+        const [nextRed, nextGreen, nextBlue] = hslToRgb(
+            rotatedHue,
+            adjustedSaturation,
+            lightness,
+        );
+        const gammaValue = Math.max(0.1, gamma);
+
+        return [
+            clamp(nextRed ** (1 / gammaValue), 0, 1),
+            clamp(nextGreen ** (1 / gammaValue), 0, 1),
+            clamp(nextBlue ** (1 / gammaValue), 0, 1),
+        ] as const;
+    };
+
+    const getGreenScreenStrength = (red: number, green: number, blue: number) => {
+        const greenLead = green - Math.max(red * 1.16, blue * 1.1);
+
+        if (green < 0.46 || greenLead <= 0) {
+            return 0;
+        }
+
+        return clamp(greenLead / 0.28, 0, 1);
+    };
+
+    const bayerMatrix = [
+        0, 8, 2, 10,
+        12, 4, 14, 6,
+        3, 11, 1, 9,
+        15, 7, 13, 5,
+    ];
+
+    const drawIntoCharacterGrid = (
+        context: CanvasRenderingContext2D,
+        source: CanvasImageSource,
+        sourceWidth: number,
+        sourceHeight: number,
+        targetWidth: number,
+        targetHeight: number,
+        sourceScale: number,
+        sourceOffsetX: number,
+        sourceOffsetY: number,
+    ) => {
+        const destinationWidth = targetWidth * sourceScale;
+        const destinationHeight = targetHeight * sourceScale;
+        const destinationX =
+            (targetWidth - destinationWidth) / 2 + targetWidth * sourceOffsetX;
+        const destinationY =
+            (targetHeight - destinationHeight) / 2 + targetHeight * sourceOffsetY;
+
+        context.drawImage(
+            source,
+            0,
+            0,
+            sourceWidth,
+            sourceHeight,
+            destinationX,
+            destinationY,
+            destinationWidth,
+            destinationHeight,
+        );
+    };
+
+    const initAsciiVideo = (root: Element) => {
+        if (!(root instanceof HTMLElement)) {
+            return;
+        }
+
+        if (root.dataset.asciiInitialized === "true") {
+            return;
+        }
+
+        root.dataset.asciiInitialized = "true";
+
+        const video = root.querySelector<HTMLVideoElement>("[data-ascii-source]");
+        const canvas = root.querySelector<HTMLCanvasElement>("[data-ascii-canvas]");
+        const context = canvas?.getContext("2d");
+        const sampleCanvas = document.createElement("canvas");
+        const sampleContext = sampleCanvas.getContext("2d", {
+            willReadFrequently: true,
+        });
+
+        if (!video || !canvas || !context || !sampleContext) {
+            return;
+        }
+
+        const frameVideo = video as VideoWithFrameCallback;
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+            .matches;
+        const readConfig = () => {
+            const columns = Math.max(32, readNumber(root.dataset.columns, 112));
+            const rows = Math.max(20, readNumber(root.dataset.rows, 67));
+            const backgroundColor = root.dataset.background ?? "#f6f7f2";
+            const inkColor = root.dataset.ink ?? "#002fa7";
+            const sourceScaleValue = clamp(
+                readNumber(root.dataset.sourceScale, 0.94),
+                0.5,
+                1.2,
+            );
+            const sourceOffsetXValue = readNumber(root.dataset.sourceOffsetX, 0);
+            const sourceOffsetYValue = readNumber(root.dataset.sourceOffsetY, 0);
+
+            root.style.setProperty("--ascii-columns", `${columns}`);
+            root.style.setProperty("--ascii-background", backgroundColor);
+            root.style.setProperty("--ascii-ink", inkColor);
+            root.style.setProperty("--ascii-source-scale", `${sourceScaleValue}`);
+            root.style.setProperty(
+                "--ascii-source-offset-x",
+                `${sourceOffsetXValue * 100}%`,
+            );
+            root.style.setProperty(
+                "--ascii-source-offset-y",
+                `${sourceOffsetYValue * 100}%`,
+            );
+
+            return {
+                columns,
+                rows,
+                cellGap: clamp(readNumber(root.dataset.cellGap, 0), 0, 0.9),
+                fps: Math.max(1, readNumber(root.dataset.fps, 18)),
+                brightness: readNumber(root.dataset.brightness, 1),
+                contrast: readNumber(root.dataset.contrast, 1),
+                saturation: Math.max(0, readNumber(root.dataset.saturation, 1)),
+                hueRotation: readNumber(root.dataset.hueRotation, 0),
+                gamma: Math.max(0.1, readNumber(root.dataset.gamma, 1)),
+                intensity: Math.max(0, readNumber(root.dataset.intensity, 1)),
+                background: backgroundColor,
+                ink: parseHexColor(inkColor),
+                paperInk: parseHexColor(root.dataset.paperInk),
+                characterSet: root.dataset.characterSet ?? "blocks",
+                characters:
+                    root.dataset.characters && root.dataset.characters.length > 1
+                        ? root.dataset.characters
+                        : " .:-=+*#%@",
+                solidThreshold: clamp(
+                    readNumber(root.dataset.solidThreshold, 0.72),
+                    0,
+                    1,
+                ),
+                sourceScale: sourceScaleValue,
+                sourceOffsetX: sourceOffsetXValue,
+                sourceOffsetY: sourceOffsetYValue,
+                reducedMotion,
+            };
+        };
+
+        let lastRender = 0;
+
+        const resizeCanvas = () => {
+            const config = readConfig();
+            const rect = root.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const width = Math.max(1, Math.round(rect.width * dpr));
+            const height = Math.max(1, Math.round(rect.height * dpr));
+
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
+            }
+
+            const rows = config.rows;
+
+            if (sampleCanvas.width !== config.columns || sampleCanvas.height !== rows) {
+                sampleCanvas.width = config.columns;
+                sampleCanvas.height = rows;
+            }
+
+            context.setTransform(dpr, 0, 0, dpr, 0, 0);
+            context.imageSmoothingEnabled = false;
+
+            return {
+                width: rect.width,
+                height: rect.height,
+                rows,
+                columns: config.columns,
+            };
+        };
+
+        const render = (timestamp = performance.now(), force = false) => {
+            const config = readConfig();
+            const frameInterval = 1000 / config.fps;
+
+            if (
+                !force &&
+                !config.reducedMotion &&
+                timestamp - lastRender < frameInterval
+            ) {
+                return;
+            }
+
+            lastRender = timestamp;
+
+            if (!video.videoWidth || !video.videoHeight) {
+                return;
+            }
+
+            const grid = resizeCanvas();
+            const cellWidth = grid.width / grid.columns;
+            const cellHeight = grid.height / grid.rows;
+            const fontSize = Math.max(4, cellHeight * 1.06);
+
+            sampleContext.fillStyle = "#6eed9c";
+            sampleContext.fillRect(0, 0, grid.columns, grid.rows);
+            drawIntoCharacterGrid(
+                sampleContext,
+                video,
+                video.videoWidth,
+                video.videoHeight,
+                grid.columns,
+                grid.rows,
+                config.sourceScale,
+                config.sourceOffsetX,
+                config.sourceOffsetY,
+            );
+
+            const image = sampleContext.getImageData(0, 0, grid.columns, grid.rows);
+            const { data } = image;
+
+            context.clearRect(0, 0, grid.width, grid.height);
+            context.fillStyle = config.background;
+            context.fillRect(0, 0, grid.width, grid.height);
+            context.font = `800 ${fontSize}px Doto, Inconsolata, monospace`;
+            context.textBaseline = "top";
+
+            for (let y = 0; y < grid.rows; y += 1) {
+                for (let x = 0; x < grid.columns; x += 1) {
+                    const index = (y * grid.columns + x) * 4;
+                    let red = clamp(
+                        ((data[index] / 255 - 0.5) * config.contrast + 0.5) *
+                            config.brightness,
+                        0,
+                        1,
+                    );
+                    let green = clamp(
+                        ((data[index + 1] / 255 - 0.5) * config.contrast + 0.5) *
+                            config.brightness,
+                        0,
+                        1,
+                    );
+                    let blue = clamp(
+                        ((data[index + 2] / 255 - 0.5) * config.contrast + 0.5) *
+                            config.brightness,
+                        0,
+                        1,
+                    );
+                    const keyStrength = getGreenScreenStrength(red, green, blue);
+                    [red, green, blue] = adjustColor(
+                        red,
+                        green,
+                        blue,
+                        config.saturation,
+                        config.hueRotation,
+                        config.gamma,
+                    );
+                    const luminance = clamp(
+                        red * 0.299 + green * 0.587 + blue * 0.114,
+                        0,
+                        1,
+                    );
+                    const subject = 1 - keyStrength;
+                    const density = clamp(
+                        subject * (0.1 + (1 - luminance - 0.04) * 1.36),
+                        0,
+                        1,
+                    );
+                    const cellX = x * cellWidth;
+                    const cellY = y * cellHeight;
+                    const gapX = Math.min(
+                        cellWidth * 0.42,
+                        cellWidth * config.cellGap * 0.5,
+                    );
+                    const gapY = Math.min(
+                        cellHeight * 0.42,
+                        cellHeight * config.cellGap * 0.5,
+                    );
+                    const drawX = cellX + gapX;
+                    const drawY = cellY + gapY;
+                    const drawWidth = Math.max(
+                        0.45,
+                        cellWidth - gapX * 2 + 0.25,
+                    );
+                    const drawHeight = Math.max(
+                        0.45,
+                        cellHeight - gapY * 2 + 0.2,
+                    );
+                    const threshold =
+                        (bayerMatrix[(y % 4) * 4 + (x % 4)] + 0.5) / 16;
+                    const fullCell = density > threshold * 0.9;
+
+                    if (subject > 0.1) {
+                        if (fullCell || density >= config.solidThreshold) {
+                            context.fillStyle = toRgba(
+                                config.ink,
+                                (0.42 + density * 0.5) * config.intensity,
+                            );
+                            if (config.characterSet === "dots") {
+                                context.beginPath();
+                                context.ellipse(
+                                    cellX + cellWidth / 2,
+                                    cellY + cellHeight / 2,
+                                    drawWidth * 0.4,
+                                    drawHeight * 0.4,
+                                    0,
+                                    0,
+                                    Math.PI * 2,
+                                );
+                                context.fill();
+                            } else if (config.characterSet === "ascii") {
+                                const characterIndex = Math.min(
+                                    config.characters.length - 1,
+                                    Math.floor(density * config.characters.length),
+                                );
+                                context.fillText(
+                                    config.characters[characterIndex],
+                                    drawX,
+                                    drawY - cellHeight * 0.08,
+                                );
+                            } else {
+                                context.fillRect(drawX, drawY, drawWidth, drawHeight);
+                            }
+                        } else {
+                            context.fillStyle = toRgba(
+                                config.paperInk,
+                                (0.34 + density * 0.42) * config.intensity,
+                            );
+                            context.fillRect(
+                                cellX + cellWidth * 0.08 + gapX,
+                                cellY + cellHeight * 0.18 + gapY,
+                                Math.max(0.4, cellWidth * 0.84 - gapX * 2),
+                                Math.max(0.4, cellHeight * 0.38 - gapY * 2),
+                            );
+                        }
+                    } else {
+                        context.fillStyle = toRgba(
+                            config.paperInk,
+                            0.2 * config.intensity,
+                        );
+                        context.fillRect(
+                            cellX + cellWidth * 0.36,
+                            cellY + cellHeight * 0.2,
+                            Math.max(0.45, cellWidth * 0.2),
+                            Math.max(0.45, cellHeight * 0.2),
+                        );
+                    }
+                }
+            }
+
+            root.classList.add("is-ascii-ready");
+        };
+
+        const requestFrame = (timestamp?: number) => {
+            render(timestamp);
+
+            if (reducedMotion) {
+                return;
+            }
+
+            if (typeof frameVideo.requestVideoFrameCallback === "function") {
+                frameVideo.requestVideoFrameCallback(requestFrame);
+                return;
+            }
+
+            window.requestAnimationFrame(requestFrame);
+        };
+
+        const start = () => {
+            resizeCanvas();
+            video.play().catch(() => undefined);
+
+            if ("fonts" in document) {
+                document.fonts.ready.then(() => requestFrame());
+                return;
+            }
+
+            requestFrame();
+        };
+
+        if ("ResizeObserver" in window) {
+            const observer = new ResizeObserver(() => render());
+            observer.observe(root);
+        } else {
+            window.addEventListener("resize", () => render());
+        }
+
+        if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+            start();
+        } else {
+            video.addEventListener("loadeddata", start, { once: true });
+        }
+
+        root.addEventListener("ascii-video:update", () => {
+            render(performance.now(), true);
+        });
+    };
+
+    const initAsciiVideos = () => {
+        document.querySelectorAll("[data-ascii-video]").forEach(initAsciiVideo);
+    };
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initAsciiVideos, {
+            once: true,
+        });
+    } else {
+        initAsciiVideos();
+    }
+
+    document.addEventListener("astro:page-load", initAsciiVideos);
+</script>
