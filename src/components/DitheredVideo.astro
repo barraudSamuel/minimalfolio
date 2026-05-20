@@ -1,0 +1,651 @@
+---
+interface Props {
+    src: string;
+    poster?: string;
+    width?: number;
+    height?: number;
+    class?: string;
+    pixelation?: number;
+    hoverPixelation?: number;
+    pixelationTransitionDuration?: number;
+    bootEffect?: boolean;
+    bootDuration?: number;
+    bootLines?: number;
+    brightness?: number;
+    contrast?: number;
+    detail?: number;
+    errorThreshold?: number;
+    color1?: string;
+    color2?: string;
+    color3?: string;
+    bloom?: boolean;
+    bloomIntensity?: number;
+    bloomRadius?: number;
+    fallback?: "none" | "poster";
+    preload?: "auto" | "metadata" | "none";
+    fetchpriority?: "high" | "low" | "auto";
+}
+
+const {
+    src,
+    poster,
+    width = 480,
+    height = 480,
+    class: className = "",
+    pixelation = 10,
+    hoverPixelation,
+    pixelationTransitionDuration = 500,
+    bootEffect = false,
+    bootDuration = 900,
+    bootLines = 22,
+    brightness = 1.4,
+    contrast = 1.2,
+    detail = 100,
+    errorThreshold = detail / 100,
+    color1 = "#002fa7",
+    color2 = "#ffffff",
+    color3 = "#f6f7f2",
+    bloom = true,
+    bloomIntensity = 0.55,
+    bloomRadius = 24,
+    fallback = "none",
+    preload = "auto",
+    fetchpriority = "high",
+} = Astro.props;
+---
+
+<div
+    class:list={["dithered-video", className]}
+    data-dithered-video
+    data-pixelation={pixelation}
+    data-hover-pixelation={hoverPixelation}
+    data-pixelation-transition-duration={pixelationTransitionDuration}
+    data-boot-effect={bootEffect ? "true" : "false"}
+    data-brightness={brightness}
+    data-contrast={contrast}
+    data-error-threshold={errorThreshold}
+    data-color-one={color1}
+    data-color-two={color2}
+    data-color-three={color3}
+    data-bloom={bloom ? "true" : "false"}
+    style={`--dither-aspect: ${width} / ${height}; --dither-bloom-opacity: ${bloomIntensity}; --dither-bloom-radius: ${bloomRadius}px; --dither-boot-duration: ${bootDuration}ms; --dither-boot-lines: ${bootLines};`}
+    aria-hidden="true"
+>
+    {
+        fallback === "poster" && poster && (
+            <img
+                data-dither-fallback
+                src={poster}
+                width={width}
+                height={height}
+                alt=""
+                class="dithered-video__fallback"
+                loading="eager"
+                decoding="async"
+            />
+        )
+    }
+    <video
+        data-dither-source
+        src={src}
+        poster={poster}
+        width={width}
+        height={height}
+        class="dithered-video__source"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload={preload}
+        fetchpriority={fetchpriority}
+    >
+    </video>
+    {bloom && <canvas data-dither-bloom class="dithered-video__bloom"></canvas>}
+    <canvas data-dither-canvas class="dithered-video__canvas"></canvas>
+</div>
+
+<style>
+    .dithered-video {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        aspect-ratio: var(--dither-aspect);
+        background: transparent;
+        isolation: isolate;
+    }
+
+    .dithered-video__fallback,
+    .dithered-video__source,
+    .dithered-video__bloom,
+    .dithered-video__canvas {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .dithered-video__fallback {
+        z-index: 0;
+        opacity: 1;
+        transition: opacity 180ms ease;
+    }
+
+    .dithered-video__source {
+        z-index: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .dithered-video__bloom,
+    .dithered-video__canvas {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 180ms ease;
+    }
+
+    .dithered-video__bloom {
+        z-index: 1;
+        filter: blur(var(--dither-bloom-radius));
+        mix-blend-mode: screen;
+        transform: scale(1.08);
+    }
+
+    .dithered-video__canvas {
+        z-index: 2;
+    }
+
+    .dithered-video::after {
+        position: absolute;
+        inset-inline: 0;
+        top: -12%;
+        z-index: 3;
+        height: 12%;
+        background: linear-gradient(
+            to bottom,
+            transparent,
+            rgba(0, 47, 167, 0.35) 42%,
+            rgba(0, 47, 167, 0.7) 50%,
+            rgba(0, 47, 167, 0.35) 58%,
+            transparent
+        );
+        content: "";
+        mix-blend-mode: screen;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .dithered-video.is-dither-ready .dithered-video__fallback {
+        opacity: 0;
+    }
+
+    .dithered-video.is-dither-ready .dithered-video__bloom {
+        opacity: var(--dither-bloom-opacity);
+    }
+
+    .dithered-video.is-dither-ready .dithered-video__canvas {
+        opacity: 1;
+    }
+
+    .dithered-video[data-boot-effect="true"].is-dither-ready
+        .dithered-video__bloom,
+    .dithered-video[data-boot-effect="true"].is-dither-ready
+        .dithered-video__canvas {
+        animation: dither-boot-reveal var(--dither-boot-duration)
+            steps(var(--dither-boot-lines), end) both;
+    }
+
+    .dithered-video[data-boot-effect="true"].is-dither-ready::after {
+        animation: dither-boot-scan var(--dither-boot-duration)
+            steps(var(--dither-boot-lines), end) both;
+    }
+
+    @keyframes dither-boot-reveal {
+        from {
+            clip-path: inset(0 0 100% 0);
+        }
+
+        to {
+            clip-path: inset(0);
+        }
+    }
+
+    @keyframes dither-boot-scan {
+        0% {
+            opacity: 0;
+            top: -12%;
+        }
+
+        8% {
+            opacity: 0.75;
+        }
+
+        86% {
+            opacity: 0.55;
+        }
+
+        100% {
+            opacity: 0;
+            top: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dithered-video__source {
+            opacity: 0;
+        }
+
+        .dithered-video__bloom,
+        .dithered-video__canvas {
+            display: none;
+        }
+
+        .dithered-video::after {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    type DitherColor = [number, number, number];
+    type PaletteColor = {
+        color: DitherColor;
+        luminance: number;
+    };
+    type FloydSteinbergKernel = [number, number, number][];
+    type VideoWithFrameCallback = HTMLVideoElement & {
+        requestVideoFrameCallback?: (callback: () => void) => number;
+    };
+
+    const clamp = (value: number, min: number, max: number) =>
+        Math.min(max, Math.max(min, value));
+
+    const parseHexColor = (hex: string | undefined): DitherColor => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
+            hex ?? "",
+        );
+
+        if (!result) {
+            return [0, 0, 0];
+        }
+
+        return [
+            Number.parseInt(result[1], 16),
+            Number.parseInt(result[2], 16),
+            Number.parseInt(result[3], 16),
+        ];
+    };
+
+    const readNumber = (value: string | undefined, fallback: number): number => {
+        const parsed = Number.parseFloat(value ?? "");
+        return Number.isFinite(parsed) ? parsed : fallback;
+    };
+
+    const getLuminance = (color: DitherColor): number =>
+        color[0] * 0.299 / 255 + color[1] * 0.587 / 255 + color[2] * 0.114 / 255;
+
+    const findNearestPaletteColor = (
+        luminance: number,
+        palette: PaletteColor[],
+    ): PaletteColor => {
+        let nearest = palette[0];
+        let smallestDistance = Math.abs(luminance - nearest.luminance);
+
+        for (let index = 1; index < palette.length; index += 1) {
+            const candidate = palette[index];
+            const distance = Math.abs(luminance - candidate.luminance);
+
+            if (distance < smallestDistance) {
+                nearest = candidate;
+                smallestDistance = distance;
+            }
+        }
+
+        return nearest;
+    };
+
+    const initDitheredVideo = (root: Element) => {
+        if (!(root instanceof HTMLElement)) {
+            return;
+        }
+
+        if (root.dataset.ditherInitialized === "true") {
+            return;
+        }
+
+        root.dataset.ditherInitialized = "true";
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            return;
+        }
+
+        const video = root.querySelector<HTMLVideoElement>("[data-dither-source]");
+        const canvas = root.querySelector<HTMLCanvasElement>("[data-dither-canvas]");
+        const bloomCanvas =
+            root.querySelector<HTMLCanvasElement>("[data-dither-bloom]");
+        const context = canvas?.getContext("2d");
+        const bloomContext = bloomCanvas?.getContext("2d");
+        const inputCanvas = document.createElement("canvas");
+        const inputContext = inputCanvas.getContext("2d", {
+            willReadFrequently: true,
+        });
+
+        if (!video || !canvas || !context || !inputContext) {
+            return;
+        }
+
+        const frameVideo = video as VideoWithFrameCallback;
+        const basePixelation = Math.max(1, readNumber(root.dataset.pixelation, 3));
+        const hoverPixelation =
+            root.dataset.hoverPixelation === undefined
+                ? basePixelation
+                : Math.max(
+                      1,
+                      readNumber(root.dataset.hoverPixelation, basePixelation),
+                  );
+        const pixelationTransitionDuration = Math.max(
+            0,
+            readNumber(root.dataset.pixelationTransitionDuration, 500),
+        );
+        const config = {
+            pixelation: basePixelation,
+            brightness: readNumber(root.dataset.brightness, 1),
+            contrast: readNumber(root.dataset.contrast, 1.2),
+            errorThreshold: Math.max(
+                0,
+                readNumber(root.dataset.errorThreshold, 1),
+            ),
+            palette: [
+                parseHexColor(root.dataset.colorOne),
+                parseHexColor(root.dataset.colorTwo ?? "#ffffff"),
+                parseHexColor(root.dataset.colorThree ?? "#f6f7f2"),
+            ].map((color) => ({
+                color,
+                luminance: getLuminance(color),
+            })),
+            bloom: root.dataset.bloom === "true",
+        };
+
+        const floydSteinbergKernel: FloydSteinbergKernel = [
+            [1, 0, 7],
+            [-1, 1, 3],
+            [0, 1, 5],
+            [1, 1, 1],
+        ];
+        const divisor = 16;
+        let errorBuffer = new Float32Array(0);
+        let pixelationAnimationFrame = 0;
+
+        const resizeCanvases = () => {
+            const rect = root.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const width = Math.max(1, Math.round(rect.width * dpr));
+            const height = Math.max(1, Math.round(rect.height * dpr));
+
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
+                context.imageSmoothingEnabled = false;
+            }
+
+            if (bloomCanvas && (bloomCanvas.width !== width || bloomCanvas.height !== height)) {
+                bloomCanvas.width = width;
+                bloomCanvas.height = height;
+
+                if (bloomContext) {
+                    bloomContext.imageSmoothingEnabled = false;
+                }
+            }
+
+            const ditherWidth = Math.max(1, Math.ceil(width / config.pixelation));
+            const ditherHeight = Math.max(1, Math.ceil(height / config.pixelation));
+
+            if (
+                inputCanvas.width !== ditherWidth ||
+                inputCanvas.height !== ditherHeight
+            ) {
+                inputCanvas.width = ditherWidth;
+                inputCanvas.height = ditherHeight;
+                inputContext.imageSmoothingEnabled = true;
+                inputContext.imageSmoothingQuality = "high";
+                errorBuffer = new Float32Array(ditherWidth * ditherHeight);
+            }
+        };
+
+        const drawVideoFrame = () => {
+            const sourceWidth = video.videoWidth;
+            const sourceHeight = video.videoHeight;
+            const targetWidth = inputCanvas.width;
+            const targetHeight = inputCanvas.height;
+
+            if (!sourceWidth || !sourceHeight || !targetWidth || !targetHeight) {
+                return false;
+            }
+
+            const scale = Math.max(
+                targetWidth / sourceWidth,
+                targetHeight / sourceHeight,
+            );
+            const cropWidth = targetWidth / scale;
+            const cropHeight = targetHeight / scale;
+            const cropX = (sourceWidth - cropWidth) / 2;
+            const cropY = (sourceHeight - cropHeight) / 2;
+
+            inputContext.clearRect(0, 0, targetWidth, targetHeight);
+            inputContext.drawImage(
+                video,
+                cropX,
+                cropY,
+                cropWidth,
+                cropHeight,
+                0,
+                0,
+                targetWidth,
+                targetHeight,
+            );
+
+            return true;
+        };
+
+        const applyDither = () => {
+            const width = inputCanvas.width;
+            const height = inputCanvas.height;
+            const image = inputContext.getImageData(0, 0, width, height);
+            const { data } = image;
+
+            errorBuffer.fill(0);
+
+            for (let y = 0; y < height; y += 1) {
+                for (let x = 0; x < width; x += 1) {
+                    const pixelIndex = y * width + x;
+                    const dataIndex = pixelIndex * 4;
+                    const red = clamp(
+                        ((data[dataIndex] / 255 - 0.5) * config.contrast + 0.5) *
+                            config.brightness,
+                        0,
+                        1,
+                    );
+                    const green = clamp(
+                        ((data[dataIndex + 1] / 255 - 0.5) * config.contrast +
+                            0.5) *
+                            config.brightness,
+                        0,
+                        1,
+                    );
+                    const blue = clamp(
+                        ((data[dataIndex + 2] / 255 - 0.5) * config.contrast +
+                            0.5) *
+                            config.brightness,
+                        0,
+                        1,
+                    );
+                    const luminance = clamp(
+                        red * 0.299 + green * 0.587 + blue * 0.114 + errorBuffer[pixelIndex],
+                        0,
+                        1,
+                    );
+                    const nearest = findNearestPaletteColor(
+                        luminance,
+                        config.palette,
+                    );
+                    const error =
+                        (luminance - nearest.luminance) * config.errorThreshold;
+                    const { color } = nearest;
+
+                    data[dataIndex] = color[0];
+                    data[dataIndex + 1] = color[1];
+                    data[dataIndex + 2] = color[2];
+
+                    for (const [offsetX, offsetY, weight] of floydSteinbergKernel) {
+                        const nextX = x + offsetX;
+                        const nextY = y + offsetY;
+
+                        if (
+                            nextX >= 0 &&
+                            nextX < width &&
+                            nextY >= 0 &&
+                            nextY < height
+                        ) {
+                            errorBuffer[nextY * width + nextX] +=
+                                (error * weight) / divisor;
+                        }
+                    }
+                }
+            }
+
+            inputContext.putImageData(image, 0, 0);
+        };
+
+        const paintOutput = () => {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.imageSmoothingEnabled = false;
+            context.drawImage(inputCanvas, 0, 0, canvas.width, canvas.height);
+
+            if (config.bloom && bloomCanvas && bloomContext) {
+                bloomContext.clearRect(0, 0, bloomCanvas.width, bloomCanvas.height);
+                bloomContext.imageSmoothingEnabled = false;
+                bloomContext.drawImage(
+                    inputCanvas,
+                    0,
+                    0,
+                    bloomCanvas.width,
+                    bloomCanvas.height,
+                );
+            }
+        };
+
+        const render = () => {
+            resizeCanvases();
+
+            if (drawVideoFrame()) {
+                applyDither();
+                paintOutput();
+                root.classList.add("is-dither-ready");
+            }
+        };
+
+        const setPixelation = (pixelation: number, shouldRender = true) => {
+            if (config.pixelation === pixelation) {
+                return;
+            }
+
+            config.pixelation = pixelation;
+
+            if (shouldRender) {
+                render();
+            }
+        };
+
+        const easeInOutCubic = (progress: number) =>
+            progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - (-2 * progress + 2) ** 3 / 2;
+
+        const transitionPixelation = (targetPixelation: number) => {
+            window.cancelAnimationFrame(pixelationAnimationFrame);
+
+            const startPixelation = config.pixelation;
+            const delta = targetPixelation - startPixelation;
+
+            if (delta === 0) {
+                return;
+            }
+
+            if (pixelationTransitionDuration === 0) {
+                setPixelation(targetPixelation);
+                return;
+            }
+
+            const startTime = window.performance.now();
+
+            const step = (time: number) => {
+                const progress = clamp(
+                    (time - startTime) / pixelationTransitionDuration,
+                    0,
+                    1,
+                );
+                const easedProgress = easeInOutCubic(progress);
+
+                setPixelation(startPixelation + delta * easedProgress);
+
+                if (progress < 1) {
+                    pixelationAnimationFrame = window.requestAnimationFrame(step);
+                    return;
+                }
+
+                setPixelation(targetPixelation, false);
+            };
+
+            pixelationAnimationFrame = window.requestAnimationFrame(step);
+        };
+
+        const requestFrame = () => {
+            render();
+
+            if (typeof frameVideo.requestVideoFrameCallback === "function") {
+                frameVideo.requestVideoFrameCallback(requestFrame);
+                return;
+            }
+
+            window.requestAnimationFrame(requestFrame);
+        };
+
+        const start = () => {
+            resizeCanvases();
+            video.play().catch(() => undefined);
+            requestFrame();
+        };
+
+        if ("ResizeObserver" in window) {
+            const observer = new ResizeObserver(resizeCanvases);
+            observer.observe(root);
+        } else {
+            window.addEventListener("resize", resizeCanvases);
+        }
+
+        root.addEventListener("mouseenter", () => transitionPixelation(hoverPixelation));
+        root.addEventListener("mouseleave", () => transitionPixelation(basePixelation));
+
+        if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+            start();
+        } else {
+            video.addEventListener("loadeddata", start, { once: true });
+        }
+    };
+
+    const initDitheredVideos = () => {
+        document
+            .querySelectorAll("[data-dithered-video]")
+            .forEach(initDitheredVideo);
+    };
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initDitheredVideos, {
+            once: true,
+        });
+    } else {
+        initDitheredVideos();
+    }
+
+    document.addEventListener("astro:page-load", initDitheredVideos);
+</script>
