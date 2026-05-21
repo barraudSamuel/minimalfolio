@@ -129,7 +129,7 @@ const getContributionLabel = (day: ContributionDay) => {
             class="flex flex-col gap-1 md:flex-row md:items-end md:justify-between"
         >
             <div>
-                <h2 class="font-inconsolata text-sm">
+                <h2 class="font-geist-pixel text-sm">
                     {
                         calendar
                             ? `${calendar.totalContributions} contributions`
@@ -167,7 +167,7 @@ const getContributionLabel = (day: ContributionDay) => {
                     </div>
                 </div>
             ) : (
-                <div class="border border-klein/25 p-4 font-inconsolata text-sm text-klein/70">
+                <div class="border border-klein/25 p-4 font-geist-pixel text-sm text-klein/70">
                     GitHub activity temporarily unavailable.
                 </div>
             )
@@ -252,7 +252,7 @@ const getContributionLabel = (day: ContributionDay) => {
         padding: 0.25rem 0.5rem;
         background-color: var(--color-klein);
         color: var(--color-light);
-        font-family: var(--font-inconsolata);
+        font-family: var(--font-geist-pixel);
         font-size: 0.75rem;
         line-height: 1rem;
         opacity: 0;

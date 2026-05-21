@@ -5,6 +5,9 @@
     --color-light: #f6f7f2; /*#f6f7f2*/
     --font-doto: "Doto", sans-serif;
     --font-inconsolata: "Inconsolata", monospace;
+    --font-geist-pixel: "Geist Pixel Square", "Geist Mono", ui-monospace,
+        SFMono-Regular, "Roboto Mono", Menlo, Monaco, "Liberation Mono",
+        "DejaVu Sans Mono", "Courier New", monospace;
 }
 
 @font-face {
@@ -55,6 +58,18 @@
         U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
         U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
         U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Geist Pixel Square";
+    src: url("/fonts/geist-pixel-square.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+.font-inconsolata {
+    font-family: var(--font-inconsolata);
 }
 
 /* Register your custom font family and tell the browser where to find it. */
