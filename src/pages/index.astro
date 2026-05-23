@@ -37,6 +37,7 @@ const projects = [
         badge: "Job aggregator",
         url: "https://jobx.dev",
         screenshot: screenJobx,
+        technologies: ["nuxt", "supabase", "selenium"],
         display: true,
     },
     {
@@ -46,6 +47,7 @@ const projects = [
         badge: "SaaS platform",
         url: "https://ccup.io",
         screenshot: screenCcup,
+        technologies: ["nuxt", "vue", "laravel", "pgsql"],
         display: true,
     },
     {
@@ -54,6 +56,7 @@ const projects = [
         badge: "Browser extension",
         url: "https://scan-translator.com",
         screenshot: screenScanTranslator,
+        technologies: ["node", "nuxt", "pgsql", "ai"],
         display: true,
     },
     {
@@ -72,6 +75,7 @@ const projects = [
         badge: "Content platform",
         url: "https://upcoming-games-releases.com/",
         screenshot: screenUpcomingGames,
+        technologies: ["node"],
         display: true,
     },
     {
@@ -84,6 +88,13 @@ const projects = [
         display: false,
     },
 ];
+
+const displayedProjects = projects
+    .filter((project) => project.display)
+    .map((project) => ({
+        ...project,
+        hostname: new URL(project.url).hostname.replace(/^www\./, ""),
+    }));
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -195,61 +206,83 @@ const projects = [
             </div>
         </section>
         <GithubContributions />
-        <section class="w-full max-w-2xl mt-32 pb-20 px-5">
-            <div class="flex flex-col items-center gap-3 text-center">
+        <section class="w-full max-w-3xl mt-32 pb-20 px-5 md:px-0">
+            <div
+                class="flex flex-col items-start gap-3 border-b border-klein pb-4 md:flex-row md:items-end md:justify-between md:gap-6"
+            >
                 <h2
-                    class="font-doto text-4xl font-semibold text-klein tracking-tighter"
+                    class="font-doto text-4xl font-semibold text-klein md:text-5xl"
                 >
-                    check out my latest work
+                    selected projects
                 </h2>
+                <p class="shrink-0 font-geist-pixel text-sm text-klein/70">
+                    {displayedProjects.length} live cases
+                </p>
             </div>
 
-            <div class="mt-10 grid grid-cols-1 gap-10 md:grid-cols-2">
+            <div class="mt-12 grid grid-cols-1 gap-5">
                 {
-                    projects
-                        .filter((project) => project.display)
-                        .map((project) => (
-                            <a
-                                href={project.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                class="group block bg-klein focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
-                            >
-                                <div class="aspect-4/3 overflow-hidden">
-                                    <Image
-                                        src={project.screenshot}
-                                        alt={`${project.name} screenshot`}
-                                        width={800}
-                                        widths={[320, 480, 640, 800]}
-                                        sizes="(min-width: 768px) 296px, calc(100vw - 40px)"
-                                        layout="constrained"
-                                        quality={70}
-                                        class="h-full w-full object-cover"
-                                    />
-                                </div>
+                    displayedProjects.map((project, index) => (
+                        <a
+                            href={project.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            class="group relative grid min-h-36 grid-cols-[3rem_minmax(0,1fr)] gap-3 border border-klein bg-light p-3 pr-10 text-klein transition duration-200 hover:bg-klein hover:text-light focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein md:grid-cols-[4rem_minmax(0,1fr)] md:gap-5 md:p-4 md:pr-14"
+                        >
+                            <span class="absolute right-0 top-0 flex h-9 min-w-11 items-center justify-center bg-klein px-3 font-geist-pixel text-xs text-light transition duration-200 group-hover:bg-light group-hover:text-klein">
+                                0{index + 1}
+                            </span>
 
-                                <div class="p-3 flex items-start justify-between gap-4">
-                                    <div>
-                                        <h3 class="mt-1 font-geist-pixel text-sm text-light">
-                                            {project.name}
-                                        </h3>
-                                    </div>
-                                    <svg
-                                        class="mt-1 size-6 shrink-0 text-light transition-transform duration-200 group-hover:rotate-45 group-focus-visible:rotate-45"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="1.5"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        aria-hidden="true"
-                                    >
-                                        <path d="M7 17 17 7" />
-                                        <path d="M8 7h9v9" />
-                                    </svg>
+                            <div class="size-12 overflow-hidden border border-klein/30 bg-klein/5 transition duration-200 group-hover:border-light/40 group-hover:bg-light/10 md:size-16">
+                                <Image
+                                    src={project.screenshot}
+                                    alt={`${project.name} screenshot`}
+                                    width={240}
+                                    widths={[96, 160, 240]}
+                                    sizes="(min-width: 768px) 96px, 64px"
+                                    quality={70}
+                                    class="h-full w-full object-cover"
+                                />
+                            </div>
+
+                            <div class="min-w-0">
+                                <h3 class="max-w-2xl wrap-break-word font-doto text-2xl font-semibold leading-tight text-klein transition duration-200 group-hover:text-light md:text-3xl">
+                                    {project.name}
+                                </h3>
+                                <p class="mt-1 break-all font-geist-pixel text-sm text-klein/70 transition duration-200 group-hover:text-light/80">
+                                    {project.hostname}
+                                </p>
+                                <p class="mt-1.5 max-w-2xl font-inconsolata text-sm leading-relaxed text-klein/80 transition duration-200 group-hover:text-light/80">
+                                    {project.summary}
+                                </p>
+
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    {project.technologies.map((technology) => (
+                                        <span class="border border-klein px-2 py-1 font-geist-pixel text-xs text-klein transition duration-200 group-hover:border-light/50 group-hover:text-light">
+                                            {technology}
+                                        </span>
+                                    ))}
                                 </div>
-                            </a>
-                        ))
+                            </div>
+
+                            <div class="absolute bottom-3 right-3 flex items-center gap-2 font-geist-pixel text-sm text-klein transition duration-200 group-hover:text-light md:bottom-4 md:right-4">
+                                <span class="hidden md:inline">open</span>
+                                <svg
+                                    class="size-6 shrink-0 rotate-45 transition-transform duration-200 group-hover:rotate-0 group-focus-visible:rotate-0"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M7 17 17 7" />
+                                    <path d="M8 7h9v9" />
+                                </svg>
+                            </div>
+                        </a>
+                    ))
                 }
             </div>
         </section>
