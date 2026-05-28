@@ -19,6 +19,7 @@ import screenJobx from "../assets/screen-jobx.png";
 import screenLavot from "../assets/screen-lavot.webp";
 import screenUpcomingGames from "../assets/screen-upcoming-games.webp";
 import screenStickMe from "../assets/screen-stick-me.webp";
+import screenTerritoryDefense from "../assets/screen-territory-defense.png";
 import laravel from "../assets/tech-laravel.webp";
 import js from "../assets/tech-js.webp";
 import pgsql from "../assets/tech-pgsql.webp";
@@ -38,6 +39,16 @@ const projects = [
         url: "https://jobx.dev",
         screenshot: screenJobx,
         technologies: ["nuxt", "supabase", "selenium"],
+        display: true,
+    },
+    {
+        name: "Tower Defence",
+        summary:
+            "Canvas tower defense prototype where towers and walls reshape every enemy path.",
+        badge: "Game prototype",
+        url: "https://tower.sambrd.xyz/",
+        screenshot: screenTerritoryDefense,
+        technologies: ["js", "canvas", "pathfinding"],
         display: true,
     },
     {
