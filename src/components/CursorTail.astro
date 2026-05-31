@@ -56,10 +56,10 @@
             [15, 7, 13, 5],
         ];
         const config = {
-            pixelSize: 4,
-            lifetime: 520,
-            maxPoints: 44,
-            minDistance: 5,
+            pixelSize: 3,
+            lifetime: 640,
+            maxPoints: 16,
+            minDistance: 14,
             color: "0, 47, 167",
             light: "246, 247, 242",
         };
@@ -132,7 +132,7 @@
 
             const remaining = 1 - progress;
             const pixelSize = config.pixelSize;
-            const radius = Math.max(2, Math.round(6 - progress * 3.5));
+            const radius = Math.max(1, Math.round(4 - progress * 2.5));
             const driftX = Math.cos(point.drift) * pixelSize * progress;
             const driftY = Math.sin(point.drift) * pixelSize * progress;
             const originX = Math.round((point.x + driftX) / pixelSize) * pixelSize;
@@ -151,16 +151,16 @@
                     const threshold =
                         (bayerMatrix[(row + 8) % 4][(column + 8) % 4] + 1) / 17;
 
-                    if (localStrength < threshold * 0.82) {
+                    if (localStrength < threshold * 1.12) {
                         continue;
                     }
 
                     const isLightPixel =
-                        (column + row + pointIndex) % 5 === 0 && remaining > 0.35;
-                    const alpha = Math.min(0.82, localStrength * 0.92);
+                        (column + row + pointIndex) % 7 === 0 && remaining > 0.45;
+                    const alpha = Math.min(0.34, localStrength * 0.46);
 
                     context.fillStyle = isLightPixel
-                        ? `rgba(${config.light}, ${alpha * 0.72})`
+                        ? `rgba(${config.light}, ${alpha * 0.36})`
                         : `rgba(${config.color}, ${alpha})`;
                     context.fillRect(
                         originX + column * pixelSize,
