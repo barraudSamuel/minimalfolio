@@ -1,0 +1,239 @@
+<canvas
+    class="cursor-tail"
+    data-cursor-tail
+    aria-hidden="true"
+></canvas>
+
+<style>
+    .cursor-tail {
+        position: fixed;
+        inset: 0;
+        z-index: 75;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+    }
+
+    @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+        .cursor-tail {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    type TrailPoint = {
+        x: number;
+        y: number;
+        time: number;
+        drift: number;
+    };
+
+    const initCursorTail = () => {
+        const canvas = document.querySelector<HTMLCanvasElement>(
+            "[data-cursor-tail]",
+        );
+
+        if (!canvas || canvas.dataset.cursorTailReady === "true") {
+            return;
+        }
+
+        canvas.dataset.cursorTailReady = "true";
+
+        const motionQuery = window.matchMedia(
+            "(pointer: fine) and (prefers-reduced-motion: no-preference)",
+        );
+        const context = canvas.getContext("2d");
+
+        if (!motionQuery.matches || !context) {
+            return;
+        }
+
+        const bayerMatrix = [
+            [0, 8, 2, 10],
+            [12, 4, 14, 6],
+            [3, 11, 1, 9],
+            [15, 7, 13, 5],
+        ];
+        const config = {
+            pixelSize: 4,
+            lifetime: 520,
+            maxPoints: 44,
+            minDistance: 5,
+            color: "0, 47, 167",
+            light: "246, 247, 242",
+        };
+        let animationFrame = 0;
+        let isRunning = false;
+        let hasLastPoint = false;
+        let lastX = 0;
+        let lastY = 0;
+        let points: TrailPoint[] = [];
+
+        const resize = () => {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const scaledWidth = Math.round(width * dpr);
+            const scaledHeight = Math.round(height * dpr);
+
+            if (canvas.width !== scaledWidth || canvas.height !== scaledHeight) {
+                canvas.width = scaledWidth;
+                canvas.height = scaledHeight;
+                canvas.style.width = `${width}px`;
+                canvas.style.height = `${height}px`;
+            }
+
+            context.setTransform(dpr, 0, 0, dpr, 0, 0);
+            context.imageSmoothingEnabled = false;
+        };
+
+        const start = () => {
+            if (isRunning) {
+                return;
+            }
+
+            isRunning = true;
+            animationFrame = window.requestAnimationFrame(render);
+        };
+
+        const addPoint = (x: number, y: number) => {
+            if (
+                hasLastPoint &&
+                Math.hypot(x - lastX, y - lastY) < config.minDistance
+            ) {
+                return;
+            }
+
+            points.unshift({
+                x,
+                y,
+                time: window.performance.now(),
+                drift: Math.random() * Math.PI * 2,
+            });
+            points = points.slice(0, config.maxPoints);
+            lastX = x;
+            lastY = y;
+            hasLastPoint = true;
+            start();
+        };
+
+        const drawPoint = (
+            point: TrailPoint,
+            pointIndex: number,
+            now: number,
+        ) => {
+            const age = now - point.time;
+            const progress = age / config.lifetime;
+
+            if (progress >= 1) {
+                return false;
+            }
+
+            const remaining = 1 - progress;
+            const pixelSize = config.pixelSize;
+            const radius = Math.max(2, Math.round(6 - progress * 3.5));
+            const driftX = Math.cos(point.drift) * pixelSize * progress;
+            const driftY = Math.sin(point.drift) * pixelSize * progress;
+            const originX = Math.round((point.x + driftX) / pixelSize) * pixelSize;
+            const originY = Math.round((point.y + driftY) / pixelSize) * pixelSize;
+
+            // Bayer thresholding keeps the tail pixelated as it fades out.
+            for (let row = -radius; row <= radius; row += 1) {
+                for (let column = -radius; column <= radius; column += 1) {
+                    const distance = Math.hypot(column, row) / (radius + 0.5);
+
+                    if (distance > 1) {
+                        continue;
+                    }
+
+                    const localStrength = remaining * (1 - distance * 0.72);
+                    const threshold =
+                        (bayerMatrix[(row + 8) % 4][(column + 8) % 4] + 1) / 17;
+
+                    if (localStrength < threshold * 0.82) {
+                        continue;
+                    }
+
+                    const isLightPixel =
+                        (column + row + pointIndex) % 5 === 0 && remaining > 0.35;
+                    const alpha = Math.min(0.82, localStrength * 0.92);
+
+                    context.fillStyle = isLightPixel
+                        ? `rgba(${config.light}, ${alpha * 0.72})`
+                        : `rgba(${config.color}, ${alpha})`;
+                    context.fillRect(
+                        originX + column * pixelSize,
+                        originY + row * pixelSize,
+                        pixelSize,
+                        pixelSize,
+                    );
+                }
+            }
+
+            return true;
+        };
+
+        function render() {
+            const now = window.performance.now();
+
+            context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            points = points.filter((point, index) => drawPoint(point, index, now));
+
+            if (points.length > 0) {
+                animationFrame = window.requestAnimationFrame(render);
+                return;
+            }
+
+            isRunning = false;
+        }
+
+        const resetLastPoint = () => {
+            hasLastPoint = false;
+        };
+
+        resize();
+
+        window.addEventListener("resize", resize);
+        window.addEventListener("blur", resetLastPoint);
+        window.addEventListener("mouseout", (event) => {
+            if (!event.relatedTarget) {
+                resetLastPoint();
+            }
+        });
+        window.addEventListener(
+            "pointermove",
+            (event) => {
+                if (event.pointerType && event.pointerType !== "mouse") {
+                    return;
+                }
+
+                addPoint(event.clientX, event.clientY);
+            },
+            { passive: true },
+        );
+        motionQuery.addEventListener("change", (event) => {
+            if (event.matches) {
+                resize();
+                start();
+                return;
+            }
+
+            points = [];
+            hasLastPoint = false;
+            isRunning = false;
+            window.cancelAnimationFrame(animationFrame);
+            context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        });
+    };
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initCursorTail, {
+            once: true,
+        });
+    } else {
+        initCursorTail();
+    }
+
+    document.addEventListener("astro:page-load", initCursorTail);
+</script>
