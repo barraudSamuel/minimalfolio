@@ -29,6 +29,12 @@
         drift: number;
     };
 
+    type Ripple = {
+        x: number;
+        y: number;
+        time: number;
+    };
+
     const initCursorTail = () => {
         const canvas = document.querySelector<HTMLCanvasElement>(
             "[data-cursor-tail]",
@@ -57,9 +63,12 @@
         ];
         const config = {
             pixelSize: 3,
-            lifetime: 640,
+            lifetime: 1100,
             maxPoints: 16,
             minDistance: 14,
+            rippleLifetime: 720,
+            rippleStartRadius: 5,
+            rippleEndRadius: 38,
             color: "0, 47, 167",
             light: "246, 247, 242",
         };
@@ -69,6 +78,7 @@
         let lastX = 0;
         let lastY = 0;
         let points: TrailPoint[] = [];
+        let ripples: Ripple[] = [];
 
         const resize = () => {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -115,6 +125,16 @@
             lastX = x;
             lastY = y;
             hasLastPoint = true;
+            start();
+        };
+
+        const addRipple = (x: number, y: number) => {
+            ripples.unshift({
+                x,
+                y,
+                time: window.performance.now(),
+            });
+            ripples = ripples.slice(0, 4);
             start();
         };
 
@@ -174,13 +194,51 @@
             return true;
         };
 
+        const drawRipple = (ripple: Ripple, now: number) => {
+            const age = now - ripple.time;
+            const progress = age / config.rippleLifetime;
+
+            if (progress >= 1) {
+                return false;
+            }
+
+            const pixelSize = config.pixelSize;
+            const radius =
+                config.rippleStartRadius +
+                (config.rippleEndRadius - config.rippleStartRadius) * progress;
+            const originX = Math.round(ripple.x / pixelSize) * pixelSize;
+            const originY = Math.round(ripple.y / pixelSize) * pixelSize;
+            const alpha = Math.min(0.46, Math.pow(1 - progress, 1.35) * 0.46);
+            const steps = Math.max(18, Math.round(radius * 1.6));
+
+            for (let index = 0; index < steps; index += 1) {
+                if ((index + Math.round(progress * 12)) % 3 === 0) {
+                    continue;
+                }
+
+                const angle = (Math.PI * 2 * index) / steps;
+                const x =
+                    Math.round((originX + Math.cos(angle) * radius) / pixelSize) *
+                    pixelSize;
+                const y =
+                    Math.round((originY + Math.sin(angle) * radius) / pixelSize) *
+                    pixelSize;
+
+                context.fillStyle = `rgba(${config.color}, ${alpha})`;
+                context.fillRect(x, y, pixelSize, pixelSize);
+            }
+
+            return true;
+        };
+
         function render() {
             const now = window.performance.now();
 
             context.clearRect(0, 0, window.innerWidth, window.innerHeight);
             points = points.filter((point, index) => drawPoint(point, index, now));
+            ripples = ripples.filter((ripple) => drawRipple(ripple, now));
 
-            if (points.length > 0) {
+            if (points.length > 0 || ripples.length > 0) {
                 animationFrame = window.requestAnimationFrame(render);
                 return;
             }
@@ -212,6 +270,13 @@
             },
             { passive: true },
         );
+        window.addEventListener(
+            "click",
+            (event) => {
+                addRipple(event.clientX, event.clientY);
+            },
+            { passive: true },
+        );
         motionQuery.addEventListener("change", (event) => {
             if (event.matches) {
                 resize();
@@ -220,6 +285,7 @@
             }
 
             points = [];
+            ripples = [];
             hasLastPoint = false;
             isRunning = false;
             window.cancelAnimationFrame(animationFrame);
