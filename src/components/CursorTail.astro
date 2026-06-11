@@ -1,6 +1,7 @@
 <canvas
     class="cursor-tail"
     data-cursor-tail
+    hidden
     aria-hidden="true"
 ></canvas>
 
@@ -22,6 +23,8 @@
 </style>
 
 <script>
+    const isCursorTailEnabled = false;
+
     type TrailPoint = {
         x: number;
         y: number;
@@ -36,6 +39,10 @@
     };
 
     const initCursorTail = () => {
+        if (!isCursorTailEnabled) {
+            return;
+        }
+
         const canvas = document.querySelector<HTMLCanvasElement>(
             "[data-cursor-tail]",
         );
