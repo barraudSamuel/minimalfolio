@@ -103,11 +103,11 @@ const maxContributions = Math.max(
 );
 
 const getContributionColor = (contributionCount: number) => {
-    const intensity =
-        contributionCount === 0
-            ? 8
-            : Math.round(28 + (contributionCount / maxContributions) * 72);
+    if (contributionCount === 0) {
+        return "var(--color-light)";
+    }
 
+    const intensity = Math.round(28 + (contributionCount / maxContributions) * 72);
     return `color-mix(in srgb, var(--color-klein) ${intensity}%, transparent)`;
 };
 
