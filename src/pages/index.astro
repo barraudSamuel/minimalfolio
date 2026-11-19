@@ -20,6 +20,8 @@ import screenLavot from "../assets/screen-lavot.webp";
 import screenUpcomingGames from "../assets/screen-upcoming-games.webp";
 import screenStickMe from "../assets/screen-stick-me.webp";
 import screenTerritoryDefense from "../assets/screen-territory-defense.png";
+import screenSheepEsports from "../assets/screen-sheep-esports.png";
+import screenMerchly from "../assets/screen-merchly.png";
 import laravel from "../assets/tech-laravel.webp";
 import js from "../assets/tech-js.webp";
 import pgsql from "../assets/tech-pgsql.webp";
@@ -31,6 +33,26 @@ import heroPoster from "../assets/me-hero-poster.webp";
 import { Image } from "astro:assets";
 
 const projects = [
+    {
+        name: "Sheep Esports",
+        summary:
+            "LoL and Rocket League esports platform with live scores, match data and a mobile app.",
+        badge: "Esports platform",
+        url: "https://sheepesports.com",
+        screenshot: screenSheepEsports,
+        technologies: ["next.js", "nestjs", "expo", "clickhouse"],
+        display: true,
+    },
+    {
+        name: "Merchly",
+        summary:
+            "Live merchandising SaaS for artists and events: stock, orders, payments and a seller app.",
+        badge: "SaaS platform",
+        url: "https://merchly.fr",
+        screenshot: screenMerchly,
+        technologies: ["react", "supabase", "expo", "shopify"],
+        display: true,
+    },
     {
         name: "jobx.dev",
         summary:
@@ -73,10 +95,11 @@ const projects = [
     {
         name: "Lavot",
         summary:
-            "Story-driven brand site blending editorial layouts with e-commerce flows.",
-        badge: "Brand experience",
+            "Anonymous mobile voting app for Romania: ID-free registration, swipe voting and live results.",
+        badge: "Civic tech",
         url: "https://lavot.ro",
         screenshot: screenLavot,
+        technologies: ["react native", "expo", "adonis", "pgsql"],
         display: false,
     },
     {
